@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f9fafb;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  select {
+    -webkit-appearance: none;
+  }
+}
+
+@keyframes wave-flow {
+  0%   { transform: translateX(0) translateY(0); }
+  50%  { transform: translateX(-80px) translateY(12px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes wave-flow-2 {
+  0%   { transform: translateX(0) translateY(0); }
+  50%  { transform: translateX(60px) translateY(-10px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes wave-flow-3 {
+  0%   { transform: translateX(0) translateY(0); }
+  50%  { transform: translateX(-40px) translateY(18px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes float-particle {
+  0%   { transform: translateY(0px) translateX(0px); opacity: 0.5; }
+  50%  { transform: translateY(-20px) translateX(10px); opacity: 1; }
+  100% { transform: translateY(0px) translateX(0px); opacity: 0.5; }
+}
+
+@keyframes ping-slow {
+  0%   { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@layer utilities {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-ping-slow {
+    animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .translate-x-5\.5 {
+    --tw-translate-x: 1.375rem;
+    transform: translateX(var(--tw-translate-x));
+  }
+
+  /* Wave paths */
+  .wave-path { will-change: transform; }
+  .wave-1 { animation: wave-flow 12s ease-in-out infinite; }
+  .wave-2 { animation: wave-flow-2 16s ease-in-out infinite; }
+  .wave-3 { animation: wave-flow-3 20s ease-in-out infinite; }
+  .wave-4 { animation: wave-flow 18s ease-in-out infinite reverse; }
+  .wave-5 { animation: wave-flow-2 14s ease-in-out infinite reverse; }
+
+  /* Floating particles */
+  .particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #22c55e;
+    will-change: transform, opacity;
+  }
+  .p1 { top: 15%; left: 10%; animation: float-particle 7s ease-in-out infinite; opacity: 0.4; }
+  .p2 { top: 70%; left: 85%; animation: float-particle 9s ease-in-out infinite 1s; opacity: 0.3; width: 2px; height: 2px; }
+  .p3 { top: 40%; left: 92%; animation: float-particle 11s ease-in-out infinite 2s; opacity: 0.5; }
+  .p4 { top: 80%; left: 20%; animation: float-particle 8s ease-in-out infinite 3s; opacity: 0.3; width: 4px; height: 4px; }
+  .p5 { top: 25%; left: 75%; animation: float-particle 13s ease-in-out infinite 0.5s; opacity: 0.4; width: 2px; height: 2px; }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .print-area {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .print-area .print\:bg-white {
+    background: white !important;
+  }
+
+  .print-area .print\:text-black {
+    color: black !important;
+  }
+
+  .print-area .print\:bg-gray-100 {
+    background: #f3f4f6 !important;
+  }
+
+  .print-area .print\:text-slate-600 {
+    color: #475569 !important;
+  }
+}
