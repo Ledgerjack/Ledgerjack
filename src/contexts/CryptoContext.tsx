@@ -25,6 +25,7 @@ interface CryptoContextValue {
   unlockViaBiometric: () => Promise<boolean>;
   lockVault: () => void;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  verifyPassword: (password: string) => Promise<boolean>;
   resetPasswordWithRecoveryKey: (recoveryKey: string, newPassword: string) => Promise<void>;
   // FIX #2 — expose encrypt/decrypt for API key storage
   encryptString_: (plaintext: string) => Promise<{ iv: Uint8Array; ciphertext: Uint8Array }>;
@@ -134,6 +135,17 @@ export function CryptoProvider({ children }: { children: ReactNode }) {
   // The recovery key IS the master key, so it proves ownership; we re-wrap the
   // vault under the new password. No old password or server needed, and this
   // preserves end-to-end encryption.
+  // Verify a password against the stored vault without changing anything.
+  // Used to gate destructive actions (e.g. delete-all-data).
+  const verifyPassword = useCallback(async (password: string): Promise<boolean> => {
+    const envelope = await db.crypto_envelope.get('master_mdk_envelope');
+    if (!envelope) return false;
+    const iterations = (envelope as { iterations?: number }).iterations ?? 100_000;
+    const raw = await decryptEnvelopeToRaw(password, envelope.salt, envelope.iv, envelope.encrypted_mdk, iterations);
+    if (raw) { raw.fill(0); return true; }
+    return false;
+  }, []);
+
   const resetPasswordWithRecoveryKey = useCallback(async (recoveryKey: string, newPassword: string) => {
     // The recovery key is the raw MDK in base64. Decode it, re-seal under the new
     // password, then load it into memory so the session is unlocked.
@@ -189,6 +201,7 @@ export function CryptoProvider({ children }: { children: ReactNode }) {
         unlockViaBiometric,
         lockVault,
         changePassword,
+        verifyPassword,
         resetPasswordWithRecoveryKey,
         encryptString_,
         decryptString_,

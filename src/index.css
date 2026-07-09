@@ -13,7 +13,15 @@
 
   body {
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f9fafb;
+    background-color: #F6F3EC;
+    color: #1B2420;
+  }
+
+  /* Ledger signature: align money like a real ledger */
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.01em;
   }
 
   input[type="number"]::-webkit-inner-spin-button,

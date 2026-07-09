@@ -36,7 +36,7 @@ export function parseLine(input: string): ParsedLine | null {
 
   return {
     amountCents,
-    description: description || "Quick entry",
+    description: description,
     isIncome: INCOME_HINTS.test(text),
   };
 }

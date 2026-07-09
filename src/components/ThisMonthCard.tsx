@@ -50,30 +50,30 @@ export default function ThisMonthCard() {
   const net = income - expenses;
 
   return (
-    <div className="bg-white rounded-xl border-2 border-slate-200 p-4">
-      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">This month</p>
+    <div className="bg-card rounded-xl border border-line p-4">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-ink-soft">This month</p>
       <div className="grid grid-cols-2 gap-3 mt-2">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-emerald-500" />
+          <TrendingUp className="w-4 h-4 text-income" />
           <div>
-            <p className="text-[10px] text-slate-400">Income</p>
-            <p className="text-sm font-bold text-emerald-600">{m(income)}</p>
+            <p className="text-[10px] text-ink-soft">Income</p>
+            <p className="text-sm font-bold text-income num">{m(income)}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <TrendingDown className="w-4 h-4 text-red-500" />
+          <TrendingDown className="w-4 h-4 text-expense" />
           <div>
-            <p className="text-[10px] text-slate-400">Expenses</p>
-            <p className="text-sm font-bold text-red-600">{m(expenses)}</p>
+            <p className="text-[10px] text-ink-soft">Expenses</p>
+            <p className="text-sm font-bold text-expense num">{m(expenses)}</p>
           </div>
         </div>
         <div>
-          <p className="text-[10px] text-slate-400">Net</p>
-          <p className={`text-sm font-bold ${net >= 0 ? "text-slate-900" : "text-red-600"}`}>{m(net)}</p>
+          <p className="text-[10px] text-ink-soft">Net</p>
+          <p className={`text-sm font-bold num ${net >= 0 ? "text-ink" : "text-expense"}`}>{m(net)}</p>
         </div>
         <div>
-          <p className="text-[10px] text-slate-400">Invoices outstanding</p>
-          <p className="text-sm font-bold text-slate-900">{m(outstanding)}</p>
+          <p className="text-[10px] text-ink-soft">Invoices outstanding</p>
+          <p className="text-sm font-bold text-ink num">{m(outstanding)}</p>
         </div>
       </div>
     </div>

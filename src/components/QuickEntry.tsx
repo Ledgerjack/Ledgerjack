@@ -45,6 +45,10 @@ export default function QuickEntry() {
   async function submit() {
     const parsed = parseLine(text);
     if (!parsed) { setFlash("Couldn't read an amount — try like \"£20 fuel\"."); return; }
+    if (!parsed.description.trim()) {
+      setFlash("Add a few words on what it was for (e.g. \"20 fuel\"), so it files correctly.");
+      return;
+    }
 
     const rule = matchRule(parsed.description, rules);
     const ruleAcc = rule?.accountId;

@@ -12,6 +12,7 @@ export default function MileageLogger() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [description, setDescription] = useState('');
   const [distance, setDistance] = useState('');
+  const [rate, setRate] = useState('');
   const { region } = useApp();
   const cfg = useRegionConfig();
   const [error, setError] = useState('');
@@ -82,7 +83,13 @@ export default function MileageLogger() {
       return;
     }
 
-    const deductionAmount = Math.round(dist * cfg.mileageRate * 100);
+    const rateVal = parseFloat(rate);
+    if (!rateVal || rateVal <= 0) {
+      setError('Enter the mileage rate you want to use (see the note below).');
+      return;
+    }
+
+    const deductionAmount = Math.round(dist * rateVal * 100);
 
     try {
       const tx = await createTransaction({
@@ -98,7 +105,7 @@ export default function MileageLogger() {
         date,
         description: description.trim(),
         distance: dist,
-        rate_applied: cfg.mileageRate,
+        rate_applied: rateVal,
         calculated_deduction: deductionAmount,
         transaction_id: tx.id,
         last_modified: Date.now(),
@@ -182,13 +189,34 @@ export default function MileageLogger() {
           />
         </div>
 
+        <div>
+          <label className="block text-sm font-semibold text-slate-800 mb-1">Rate per {cfg.mileageUnit} ({cfg.currencySymbol})</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+            placeholder={`e.g. 0.45`}
+            className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg text-sm text-slate-900 font-medium"
+          />
+          <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2.5">
+            <p className="text-[11px] text-amber-800 leading-relaxed">
+              <strong>Check before you claim.</strong> Mileage rates, methods and <em>eligibility</em> vary, and
+              not everyone can claim mileage (some must use actual vehicle costs instead). Look up your tax
+              authority's current rates and rules, then enter the rate <em>you</em> are entitled to use. These
+              figures are your responsibility.
+            </p>
+          </div>
+        </div>
+
         <div className="bg-brand-50 border border-brand-200 rounded-lg p-3">
           <p className="text-sm text-brand-800 font-medium">
-            Rate: {cfg.currencySymbol}{cfg.mileageRate}/{cfg.mileageUnit} &middot;
             Deduction: <strong>{formatCurrency(
-              Math.round((parseFloat(distance) || 0) * cfg.mileageRate * 100),
+              Math.round((parseFloat(distance) || 0) * (parseFloat(rate) || 0) * 100),
               region,
             )}</strong>
+            <span className="text-xs text-brand-600"> ({distance || '0'} {cfg.mileageUnit} × {cfg.currencySymbol}{rate || '0'})</span>
           </p>
         </div>
 

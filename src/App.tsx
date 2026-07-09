@@ -103,7 +103,7 @@ function AppContent() {
 
   if (!dbReady || onboarded === null) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-paper flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -137,7 +137,7 @@ function AppContent() {
   return (
     // Pass cryptoHelpers so AppProvider can encrypt/decrypt the API key
     <AppProvider crypto={cryptoHelpers}>
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-paper">
         <header className="bg-white border-b-2 border-brand-500 px-4 py-3 sticky top-0 z-40 shadow-sm">
           <div className="max-w-lg mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2">

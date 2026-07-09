@@ -135,7 +135,7 @@ async function exportTaxBundle(
 
   // Build P&L summary CSV
   const plLines: string[] = [
-    `Provisional Self-Assessment Summary - ${cfg.label} - FY ${fy}/${fy + 1}`,
+    `${region === 'uk' ? 'Provisional Self-Assessment Summary' : 'Provisional Income & Tax Summary'} - ${cfg.label} - FY ${fy}/${fy + 1}`,
     '',
     'INCOME',
     'Account,Amount',
@@ -347,7 +347,7 @@ export default function Reports() {
         <div className="bg-brand-600 text-white p-5 print:bg-white print:text-black print:border-b print:border-slate-200">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="text-xl font-bold tracking-tight">Provisional Self-Assessment Summary</h3>
+              <h3 className="text-xl font-bold tracking-tight">{region === 'uk' ? 'Provisional Self-Assessment Summary' : 'Provisional Income & Tax Summary'}</h3>
               <p className="text-brand-100 print:text-slate-500 text-sm mt-1 font-medium">
                 {cfg.label} &middot; FY {fy}/{fy + 1} &middot; {start} to {end}
                 {jobTagFilter && ` &middot; Job: ${jobTagFilter}`}
@@ -373,7 +373,7 @@ export default function Reports() {
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 print:bg-white">
               <div className="flex items-center gap-1.5 mb-2">
                 <TrendingDown className="w-4 h-4 text-red-500" />
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Allowable Expenses</span>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Expenses</span>
               </div>
               <span className="text-xl font-bold text-red-600 block">{formatCurrency(totalExpenses, region)}</span>
             </div>
@@ -411,7 +411,7 @@ export default function Reports() {
           {/* Expense breakdown */}
           <div>
             <h4 className="text-[10px] font-bold text-red-700 uppercase tracking-widest mb-3 pb-2 border-b border-slate-100">
-              Allowable Expenses
+              Expenses
             </h4>
             {Object.entries(expensesByAccount).sort().map(([account, amount]) => (
               <div key={account} className="flex justify-between py-1.5 border-b border-slate-100 last:border-0">

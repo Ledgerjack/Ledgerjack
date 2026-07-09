@@ -50,7 +50,7 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
     exportAuditLog, toggleExportAuditLog,
     exportAuditEntries, addExportAuditEntry, updateBackupTimestamp,
   } = useApp();
-  const { changePassword, initializeVault, hasVault } = useCrypto();
+  const { changePassword, initializeVault, hasVault, verifyPassword } = useCrypto();
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -63,6 +63,8 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
   const [exportMsg, setExportMsg] = useState('');
   const [importMsg, setImportMsg] = useState('');
   const [showConfirmPurge, setShowConfirmPurge] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   // CSV drag-and-drop + dedup state
   const [csvDragOver, setCsvDragOver] = useState(false);
@@ -184,6 +186,10 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
   };
 
   const handleDeleteAllData = async () => {
+    setDeleteError('');
+    if (!deletePassword) { setDeleteError('Enter your password to confirm.'); return; }
+    const ok = await verifyPassword(deletePassword);
+    if (!ok) { setDeleteError('Incorrect password. Data was not deleted.'); return; }
     await db.delete();
     localStorage.clear();
     sessionStorage.clear();
@@ -718,7 +724,15 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
           </button>
         ) : (
           <div className="space-y-2">
-            <p className="text-xs font-bold text-red-700">Confirm irreversible erasure of all local data?</p>
+            <p className="text-xs font-bold text-red-700">Enter your password to permanently erase all local data:</p>
+            <input
+              type="password"
+              value={deletePassword}
+              onChange={(e) => { setDeletePassword(e.target.value); setDeleteError(''); }}
+              placeholder="Your password"
+              className="w-full px-3 py-2 border-2 border-red-300 rounded-lg text-sm text-slate-900 font-medium"
+            />
+            {deleteError && <p className="text-xs font-bold text-red-700">{deleteError}</p>}
             <div className="flex gap-2">
               <button
                 onClick={handleDeleteAllData}
@@ -727,7 +741,7 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
                 Yes, wipe everything
               </button>
               <button
-                onClick={() => setShowConfirmPurge(false)}
+                onClick={() => { setShowConfirmPurge(false); setDeletePassword(''); setDeleteError(''); }}
                 className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-sm font-bold transition-colors"
               >
                 Cancel
