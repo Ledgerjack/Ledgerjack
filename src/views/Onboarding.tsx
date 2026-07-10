@@ -217,7 +217,7 @@ function CountryCombobox({ value, onChange }: { value: string; onChange: (id: st
           <div className="text-slate-900 font-semibold text-sm truncate">{selected?.label ?? 'Select country…'}</div>
           {selected && (
             <div className="text-slate-500 text-xs mt-0.5">
-              {selected.currencySymbol} {selected.currencyCode} &middot; FY {monthName(selected.fiscalYearStart.month)} {selected.fiscalYearStart.day} &middot; {selected.currencySymbol}{selected.mileageRate.toFixed(2)} / {selected.mileageUnit === 'miles' ? 'mile' : 'km'}
+              {selected.currencySymbol} {selected.currencyCode} &middot; FY {monthName(selected.fiscalYearStart.month)} {selected.fiscalYearStart.day}
             </div>
           )}
         </div>
@@ -453,7 +453,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 <div className="text-center space-y-1">
                   <ShieldLogo size="lg" />
                   <div className="pt-3">
-                    <p className="text-[11px] font-bold text-brand-600 uppercase tracking-[0.2em] mb-1">Pre-accounting for tradespeople</p>
+                    <p className="text-[11px] font-bold text-brand-600 uppercase tracking-[0.2em] mb-1">Free, private, AI-powered bookkeeping</p>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">LedgerJack</h1>
                     <p className="text-slate-500 text-sm font-medium mt-1.5">Your Money. Your Device. Total Privacy.</p>
                     <p className="text-brand-600 text-xs font-mono mt-2 min-h-[1rem]">
@@ -475,7 +475,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   <div className="flex-1 min-w-0 text-xs text-slate-500 leading-relaxed">
                     <span className="text-slate-800 font-semibold">{selectedConfig.label}</span>
                     {' · '}FY {monthName(selectedConfig.fiscalYearStart.month)} {selectedConfig.fiscalYearStart.day}
-                    {' · '}{selectedConfig.currencySymbol}{selectedConfig.mileageRate.toFixed(2)} / {selectedConfig.mileageUnit === 'miles' ? 'mile' : 'km'}
                   </div>
                 </div>
 

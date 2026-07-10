@@ -97,11 +97,12 @@ export default function TransactionEntry() {
     return hasImage; // smart: use high quality only for images
   };
 
-  const handleAIParse = async () => {
+  const handleAIParse = async (forceBigModel = false) => {
     if (!aiInput.trim()) return;
     setAiLoading(true);
     setAiError('');
     setParsedResult(null);
+    if (forceBigModel) setPendingConfirm(null);
 
     try {
       if (!apiKey) {
@@ -115,8 +116,8 @@ export default function TransactionEntry() {
         apiKey,
         region,
         imageData:          receiptImageData || undefined,
-        useHighQualityModel: resolveUseHighQuality(hasImage),
-        modelId:            getSelectedModel('scanning'),
+        useHighQualityModel: forceBigModel ? true : resolveUseHighQuality(hasImage),
+        modelId:            forceBigModel ? 'openai/gpt-4o' : getSelectedModel('scanning'),
       });
 
       // If there's a split suggestion, show the split review UI before committing
@@ -312,15 +313,15 @@ export default function TransactionEntry() {
             <div className="bg-white border-2 border-brand-300 rounded-xl p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-brand-600" />
-                <p className="text-sm font-bold text-slate-900">Check the scanned details</p>
+                <p className="text-sm font-bold text-slate-900">Check what was scanned</p>
               </div>
               <p className="text-xs text-slate-500">
-                The AI read this from your entry. Please confirm the <span className="font-semibold">amount</span> is correct before saving.
+                Please review this before it's saved — AI can misread receipts. Make sure the <span className="font-semibold">amount</span> is right.
               </p>
 
               <div className="bg-slate-50 border border-line rounded-lg p-3 space-y-1">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Amount</p>
-                <p className="text-2xl font-bold text-slate-900">{formatCurrency(pendingConfirm.amount, region)}</p>
+                <p className="text-2xl font-bold text-slate-900 num">{formatCurrency(pendingConfirm.amount, region)}</p>
                 <div className="pt-1 space-y-0.5">
                   <p className="text-sm text-slate-700 truncate"><span className="text-ink-soft">Description:</span> {pendingConfirm.description}</p>
                   <p className="text-sm text-slate-700"><span className="text-ink-soft">Date:</span> {pendingConfirm.date}</p>
@@ -328,11 +329,13 @@ export default function TransactionEntry() {
                 </div>
               </div>
 
+              <p className="text-sm font-bold text-ink text-center">Is <span className="text-brand-700 num">{formatCurrency(pendingConfirm.amount, region)}</span> correct?</p>
+
               {trades.length > 0 && (
                 <select
                   value={selectedTrade}
                   onChange={(e) => setSelectedTrade(e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg text-sm bg-white"
+                  className="w-full px-3 py-2 border border-line rounded-lg text-sm bg-white"
                 >
                   <option value="">Trade: Unassigned</option>
                   {trades.map((t) => <option key={t.id} value={t.id}>Trade: {t.name}</option>)}
@@ -344,7 +347,7 @@ export default function TransactionEntry() {
                   onClick={handleConfirmScanned}
                   className="flex-1 flex items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-lg text-sm font-bold transition-colors"
                 >
-                  <CheckCircle2 className="w-4 h-4" /> Confirm &amp; save
+                  <CheckCircle2 className="w-4 h-4" /> Yes — save
                 </button>
                 <button
                   onClick={handleEditScanned}
@@ -360,7 +363,16 @@ export default function TransactionEntry() {
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-[10px] text-ink-soft">It'll be saved to your review queue, still marked for a final check.</p>
+
+              {/* If not correct, offer a more accurate (bigger) model */}
+              <button
+                onClick={() => handleAIParse(true)}
+                disabled={aiLoading}
+                className="w-full flex items-center justify-center gap-1.5 border border-brand-300 text-brand-700 py-2 rounded-lg text-xs font-bold disabled:opacity-50"
+              >
+                {aiLoading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Re-scanning…</> : <>Not right? Scan again with a more accurate model</>}
+              </button>
+              <p className="text-[10px] text-ink-soft">The more accurate model costs a little more per scan. It'll be saved to your review queue for a final check either way.</p>
             </div>
           )}
 

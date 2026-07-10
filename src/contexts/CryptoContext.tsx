@@ -26,6 +26,7 @@ interface CryptoContextValue {
   lockVault: () => void;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   verifyPassword: (password: string) => Promise<boolean>;
+  exportRecoveryKey: (password: string) => Promise<string | null>;
   resetPasswordWithRecoveryKey: (recoveryKey: string, newPassword: string) => Promise<void>;
   // FIX #2 — expose encrypt/decrypt for API key storage
   encryptString_: (plaintext: string) => Promise<{ iv: Uint8Array; ciphertext: Uint8Array }>;
@@ -146,6 +147,20 @@ export function CryptoProvider({ children }: { children: ReactNode }) {
     return false;
   }, []);
 
+  // Re-derive the recovery key (base64 of the master key) by unlocking the
+  // envelope with the password. Lets the user back it up any time — gated by
+  // their password so a passer-by at an unlocked screen can't grab it.
+  const exportRecoveryKey = useCallback(async (password: string): Promise<string | null> => {
+    const envelope = await db.crypto_envelope.get('master_mdk_envelope');
+    if (!envelope) return null;
+    const iterations = (envelope as { iterations?: number }).iterations ?? 100_000;
+    const raw = await decryptEnvelopeToRaw(password, envelope.salt, envelope.iv, envelope.encrypted_mdk, iterations);
+    if (!raw) return null;
+    const key = btoa(String.fromCharCode(...raw));
+    raw.fill(0);
+    return key;
+  }, []);
+
   const resetPasswordWithRecoveryKey = useCallback(async (recoveryKey: string, newPassword: string) => {
     // The recovery key is the raw MDK in base64. Decode it, re-seal under the new
     // password, then load it into memory so the session is unlocked.
@@ -202,6 +217,7 @@ export function CryptoProvider({ children }: { children: ReactNode }) {
         lockVault,
         changePassword,
         verifyPassword,
+        exportRecoveryKey,
         resetPasswordWithRecoveryKey,
         encryptString_,
         decryptString_,

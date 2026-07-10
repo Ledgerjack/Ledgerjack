@@ -14,6 +14,7 @@ import { importEncryptedBackup, exportEncryptedBackup } from "../lib/cloudbackup
 import { getLastBackupTimestamp, readFileAsText, downloadFile } from "../lib/backup";
 import { nativeShareFile } from "../lib/share/share";
 import { Mail } from "lucide-react";
+import RecoveryKeyBackup from "../components/RecoveryKeyBackup";
 
 export default function CloudBackup({ onBack }: { onBack: () => void }) {
   const { updateBackupTimestamp } = useApp();
@@ -196,6 +197,9 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
           <p className={`text-xs ${msg.ok ? "text-emerald-700" : "text-red-700"}`}>{msg.text}</p>
         </div>
       )}
+
+      {/* Recovery key backup — device + email */}
+      <RecoveryKeyBackup />
 
       {/* Restore */}
       <div className="bg-white rounded-xl border border-line p-3 space-y-2">

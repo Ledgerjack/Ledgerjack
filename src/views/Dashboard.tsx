@@ -6,7 +6,6 @@ import { formatCurrency } from '../lib/currency';
 import { getCurrentFiscalYear, getFiscalYearRange } from '../lib/regions';
 import Disclaimer from '../components/Disclaimer';
 import BackupReminder from '../components/BackupReminder';
-import TaxPotCard from '../components/TaxPotCard';
 import QuickEntry from '../components/QuickEntry';
 import ThisMonthCard from '../components/ThisMonthCard';
 import BudgetHomeCard from '../components/BudgetHomeCard';
@@ -200,8 +199,6 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       <QuickEntry />
       <ThisMonthCard />
       <BudgetHomeCard onNavigate={onNavigate} />
-
-      {region === 'uk' && <TaxPotCard onNavigate={onNavigate} />}
 
       <button
         onClick={() => onNavigate('bulk-receipts')}
