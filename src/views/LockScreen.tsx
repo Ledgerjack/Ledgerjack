@@ -165,7 +165,7 @@ export default function LockScreen() {
               onKeyDown={(e) => e.key === 'Enter' && !unlockDisabled && handleUnlock()}
               placeholder="Vault password"
               disabled={isThrottled}
-              className="w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none font-medium disabled:opacity-50"
+              className="w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl text-slate-900 placeholder:text-ink-soft focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none font-medium disabled:opacity-50"
               autoFocus
             />
 
@@ -212,20 +212,20 @@ export default function LockScreen() {
               value={recoveryKey}
               onChange={(e) => { setRecoveryKey(e.target.value); setError(''); }}
               placeholder="Paste your recovery key"
-              className="w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl text-slate-900 text-xs font-mono placeholder:text-slate-400 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"
+              className="w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl text-slate-900 text-xs font-mono placeholder:text-ink-soft focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"
               autoFocus
             />
             {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
-            <div className="bg-slate-50 border-2 border-slate-200 rounded-xl p-3 space-y-2">
+            <div className="bg-slate-50 border border-line rounded-xl p-3 space-y-2">
               <label className="text-xs font-semibold text-slate-600">Forgot your password? Set a new one (optional)</label>
               <input
                 type="password"
                 value={resetNewPassword}
                 onChange={(e) => { setResetNewPassword(e.target.value); setError(''); }}
                 placeholder="New password (at least 8 characters)"
-                className="w-full px-3 py-2 bg-white border-2 border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 outline-none"
+                className="w-full px-3 py-2 bg-white border-2 border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-ink-soft outline-none"
               />
-              <p className="text-[10px] text-slate-400">Leave blank to just unlock. Your recovery key proves it's you, so this resets the password without needing the old one — and your data stays end-to-end encrypted.</p>
+              <p className="text-[10px] text-ink-soft">Leave blank to just unlock. Your recovery key proves it's you, so this resets the password without needing the old one — and your data stays end-to-end encrypted.</p>
             </div>
             <button
               onClick={handleRecoveryUnlock}

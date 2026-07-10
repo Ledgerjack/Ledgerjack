@@ -78,7 +78,7 @@ export default function FinalDeclaration({ taxYear, onBack }: { taxYear: string;
           >
             {busy ? "Submitting…" : "Submit final declaration"}
           </button>
-          <p className="text-xs text-slate-400 text-center">
+          <p className="text-xs text-ink-soft text-center">
             {HMRC_ENV === "sandbox" ? "Practice mode — this is a test submission." : "This is a real, final submission to HMRC."}
           </p>
         </>

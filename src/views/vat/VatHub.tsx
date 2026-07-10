@@ -111,13 +111,13 @@ export default function VatHub({ onBack }: { onBack: () => void }) {
 
         {result !== "ok" && (
           <>
-            <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+            <div className="bg-white rounded-xl border border-line p-4 space-y-2">
               {BOXES.map((b) => (
                 <label key={b.key} className="block text-xs text-slate-500">{b.label}
                   <input inputMode="decimal" value={vals[b.key] ?? ""} onChange={(e) => setVals({ ...vals, [b.key]: e.target.value })} placeholder={b.integer ? "0" : "0.00"} className="mt-1 w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
                 </label>
               ))}
-              <div className="border-t border-slate-100 pt-2 text-sm">
+              <div className="border-t border-line pt-2 text-sm">
                 <div className="flex justify-between"><span className="text-slate-500">Box 3 — Total VAT due</span><span className="font-bold">{box3.toFixed(2)}</span></div>
                 <div className="flex justify-between"><span className="text-slate-500">Box 5 — Net VAT due</span><span className="font-bold">{box5.toFixed(2)}</span></div>
               </div>
@@ -129,7 +129,7 @@ export default function VatHub({ onBack }: { onBack: () => void }) {
             </label>
             {message && <p className={`text-sm ${result === "error" ? "text-red-600" : "text-slate-600"}`}>{message}</p>}
             <button onClick={submit} disabled={busy || !finalised} className="w-full bg-brand-600 text-white py-2.5 rounded-lg text-sm font-bold disabled:opacity-50">{busy ? "Submitting…" : "Submit to HMRC"}</button>
-            <p className="text-xs text-slate-400 text-center">{HMRC_ENV === "sandbox" ? "Practice mode — test submission." : "This is a real submission to HMRC."}</p>
+            <p className="text-xs text-ink-soft text-center">{HMRC_ENV === "sandbox" ? "Practice mode — test submission." : "This is a real submission to HMRC."}</p>
           </>
         )}
         {result === "ok" && (
@@ -151,11 +151,11 @@ export default function VatHub({ onBack }: { onBack: () => void }) {
         {HMRC_ENV === "sandbox" && <span className="ml-auto text-[10px] font-bold uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-200 rounded px-2 py-0.5">Practice mode</span>}
       </div>
 
-      {connected === null && <p className="text-sm text-slate-400">Loading…</p>}
-      {connected === false && <div className="bg-white rounded-xl border-2 border-slate-200 p-4"><ConnectHmrc /></div>}
+      {connected === null && <p className="text-sm text-ink-soft">Loading…</p>}
+      {connected === false && <div className="bg-white rounded-xl border border-line p-4"><ConnectHmrc /></div>}
 
       {connected && !vrn && (
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-3">
+        <div className="bg-white rounded-xl border border-line p-4 space-y-3">
           <h3 className="font-bold text-slate-900">Your VAT number (VRN)</h3>
           <p className="text-xs text-slate-500">9 digits. Stored encrypted on your device.</p>
           <input value={vrnInput} onChange={(e) => setVrnInput(e.target.value)} placeholder="e.g. 123456789" className="w-full px-3 py-2 border-2 border-slate-300 rounded-lg text-sm font-medium" />
@@ -171,16 +171,16 @@ export default function VatHub({ onBack }: { onBack: () => void }) {
             <button onClick={loadObs} className="flex items-center gap-1 text-sm text-brand-600 font-semibold"><RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /> Refresh</button>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
-          {loading && <p className="text-sm text-slate-400">Checking with HMRC…</p>}
+          {loading && <p className="text-sm text-ink-soft">Checking with HMRC…</p>}
           {!loading && obligations.length === 0 && !error && <p className="text-sm text-slate-500">No VAT obligations found in this window.</p>}
           {obligations.map((o, i) => (
-            <div key={i} className="bg-white rounded-xl border-2 border-slate-200 p-4 flex items-center justify-between">
+            <div key={i} className="bg-white rounded-xl border border-line p-4 flex items-center justify-between">
               <div>
                 <p className="font-semibold text-slate-900 text-sm">{o.start} → {o.end}</p>
                 <p className="text-xs text-slate-500">Due {o.due}</p>
               </div>
               {o.status === "F"
-                ? <span className="text-xs font-bold text-emerald-600 flex items-center gap-1"><ShieldCheck className="w-4 h-4" /> Submitted</span>
+                ? <span className="text-xs font-bold text-income flex items-center gap-1"><ShieldCheck className="w-4 h-4" /> Submitted</span>
                 : <button onClick={() => { setSelected(o); setVals({}); setFinalised(false); setResult(null); setMessage(null); setScreen("submit"); }} className="bg-brand-600 text-white text-sm font-bold px-3 py-1.5 rounded-lg">Complete</button>}
             </div>
           ))}

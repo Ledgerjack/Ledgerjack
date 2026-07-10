@@ -24,6 +24,6 @@ export default function QRCode({ value, size = 200 }: { value: string; size?: nu
     });
   }, [value, size]);
 
-  if (error) return <p className="text-xs text-slate-400">{error}</p>;
-  return <canvas ref={canvasRef} width={size} height={size} className="rounded-lg border border-slate-200" />;
+  if (error) return <p className="text-xs text-ink-soft">{error}</p>;
+  return <canvas ref={canvasRef} width={size} height={size} className="rounded-lg border border-line" />;
 }

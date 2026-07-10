@@ -10,8 +10,10 @@ import {
   loadDestination, saveDestination, saveBackupSecrets, loadBackupSecrets, runBackup,
   type DestinationKind,
 } from "../lib/cloudbackup/destinations";
-import { importEncryptedBackup } from "../lib/cloudbackup/encryptedBackup";
-import { getLastBackupTimestamp, readFileAsText } from "../lib/backup";
+import { importEncryptedBackup, exportEncryptedBackup } from "../lib/cloudbackup/encryptedBackup";
+import { getLastBackupTimestamp, readFileAsText, downloadFile } from "../lib/backup";
+import { nativeShareFile } from "../lib/share/share";
+import { Mail } from "lucide-react";
 
 export default function CloudBackup({ onBack }: { onBack: () => void }) {
   const { updateBackupTimestamp } = useApp();
@@ -71,7 +73,7 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
     <button
       onClick={() => !soon && setKind(k)}
       disabled={soon}
-      className={`flex items-center gap-2 w-full p-3 rounded-xl border-2 text-left ${kind === k && !soon ? "border-brand-500 bg-brand-50" : "border-slate-200 bg-white"} ${soon ? "opacity-60" : ""}`}
+      className={`flex items-center gap-2 w-full p-3 rounded-xl border-2 text-left ${kind === k && !soon ? "border-brand-500 bg-brand-50" : "border-line bg-white"} ${soon ? "opacity-60" : ""}`}
     >
       {icon}
       <span className="text-sm font-semibold text-slate-800 flex-1">{label}</span>
@@ -99,7 +101,7 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
         </p>
       </div>
 
-      {last && <p className="text-[11px] text-emerald-600 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Last backup: {new Date(last).toLocaleString()}</p>}
+      {last && <p className="text-[11px] text-income flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Last backup: {new Date(last).toLocaleString()}</p>}
 
       {/* Destination */}
       <div className="space-y-2">
@@ -113,8 +115,8 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
         {opt("icloud", "iCloud Drive", <Cloud className="w-5 h-5 text-slate-500" />, true)}
       </div>
 
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-start gap-2">
-        <ShieldCheck className="w-4 h-4 text-slate-400 mt-0.5" />
+      <div className="bg-white rounded-xl border border-line p-3 flex items-start gap-2">
+        <ShieldCheck className="w-4 h-4 text-ink-soft mt-0.5" />
         <div>
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold text-slate-900">Automatic cloud sync</span>
@@ -125,16 +127,16 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
       </div>
 
       {kind === "webdav" && (
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-3 space-y-2">
+        <div className="bg-white rounded-xl border border-line p-3 space-y-2">
           <input value={webdavUrl} onChange={(e) => setWebdavUrl(e.target.value)} placeholder="WebDAV URL (e.g. https://cloud.me/remote.php/dav/files/me/)" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-xs" />
           <input value={webdavUser} onChange={(e) => setWebdavUser(e.target.value)} placeholder="Username" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
           <input type="password" value={webdavPassword} onChange={(e) => setWebdavPassword(e.target.value)} placeholder="Password (stored encrypted on this device)" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
-          <p className="text-[10px] text-slate-400">Some WebDAV servers block browser uploads (CORS). If yours does, use the encrypted file option and upload it yourself.</p>
+          <p className="text-[10px] text-ink-soft">Some WebDAV servers block browser uploads (CORS). If yours does, use the encrypted file option and upload it yourself.</p>
         </div>
       )}
 
       {/* Secret: recovery key by default (nothing new to remember) */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-3 space-y-1">
+      <div className="bg-white rounded-xl border border-line p-3 space-y-1">
         <label className="text-xs font-semibold text-slate-700">
           {useCustomPass ? "Custom backup passphrase" : "Your recovery key"}
         </label>
@@ -146,13 +148,13 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
           className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-mono"
         />
         {!useCustomPass ? (
-          <p className="text-[10px] text-slate-400">
+          <p className="text-[10px] text-ink-soft">
             Your backup is protected by your <span className="font-semibold">recovery key</span> — the one you saved
             when you set up LedgerJack. Nothing new to remember: to restore, you'll use this same key. Keep it safe
             (you already needed it for your account).
           </p>
         ) : (
-          <p className="text-[10px] text-slate-400">
+          <p className="text-[10px] text-ink-soft">
             A separate passphrase. Write it down safely — without it the backup can't be restored, and we can't
             recover it for you.
           </p>
@@ -166,15 +168,37 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
         <Upload className="w-4 h-4" /> {busy ? "Working…" : "Save destination & back up now"}
       </button>
 
+      <button
+        onClick={async () => {
+          if (passphrase.length < 8) { setMsg({ ok: false, text: useCustomPass ? "Choose a passphrase of at least 8 characters first." : "Paste your recovery key first." }); return; }
+          try {
+            const blob = await exportEncryptedBackup(passphrase);
+            const filename = `ledgerjack-backup-${new Date().toISOString().slice(0,10)}.ljenc`;
+            const shared = await nativeShareFile(filename, blob, "application/octet-stream");
+            if (shared) {
+              setMsg({ ok: true, text: "Pick your email app and send it to yourself. Keep your recovery key/passphrase safe — you'll need it to restore." });
+            } else {
+              downloadFile(blob, filename, "application/octet-stream");
+              setMsg({ ok: true, text: "Backup downloaded. Attach it to an email to yourself to keep a safe off-device copy." });
+            }
+          } catch {
+            setMsg({ ok: false, text: "Couldn't create the backup. Try again." });
+          }
+        }}
+        className="w-full flex items-center justify-center gap-1.5 bg-brand-50 text-brand-700 border border-line py-2.5 rounded-lg text-sm font-bold"
+      >
+        <Mail className="w-4 h-4" /> Email a backup to yourself
+      </button>
+
       {msg && (
         <div className={`rounded-xl border-2 p-3 flex items-start gap-2 ${msg.ok ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
-          {msg.ok ? <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" /> : <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />}
+          {msg.ok ? <CheckCircle2 className="w-4 h-4 text-income mt-0.5 shrink-0" /> : <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />}
           <p className={`text-xs ${msg.ok ? "text-emerald-700" : "text-red-700"}`}>{msg.text}</p>
         </div>
       )}
 
       {/* Restore */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-3 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-3 space-y-2">
         <p className="text-sm font-bold text-slate-900">Restore from a backup</p>
         <input type="password" value={restorePass} onChange={(e) => setRestorePass(e.target.value)} placeholder="Recovery key (or your backup passphrase)" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-mono" />
         <label className="block w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-sm font-semibold cursor-pointer">

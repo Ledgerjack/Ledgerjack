@@ -109,10 +109,10 @@ export default function PendingReview() {
     return (
       <div className="space-y-4 pb-24">
         <Disclaimer />
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-8 text-center">
+        <div className="bg-white rounded-xl border border-line p-8 text-center">
           <Check className="w-10 h-10 text-brand-500 mx-auto mb-3" />
           <p className="text-slate-900 font-bold">All caught up!</p>
-          <p className="text-slate-400 text-sm mt-1">No transactions pending review.</p>
+          <p className="text-ink-soft text-sm mt-1">No transactions pending review.</p>
         </div>
       </div>
     );
@@ -145,7 +145,7 @@ export default function PendingReview() {
           const isExpense = debitSplit?.account_id.startsWith('Expenses');
 
           return (
-            <div key={tx.id} className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-3">
+            <div key={tx.id} className="bg-white rounded-xl border border-line p-4 space-y-3">
               {isEditing ? (
                 <div className="space-y-3">
                   <input
@@ -209,14 +209,14 @@ export default function PendingReview() {
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-9 h-9 rounded-lg flex items-center justify-center border ${
-                          isExpense ? 'bg-red-50 border-red-200 text-red-600' : 'bg-emerald-50 border-emerald-200 text-emerald-600'
+                          isExpense ? 'bg-red-50 border-red-200 text-red-600' : 'bg-emerald-50 border-emerald-200 text-income'
                         }`}
                       >
                         {isExpense ? <ArrowDownRight className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
                       </div>
                       <div>
                         <p className="font-semibold text-slate-900">{tx.description}</p>
-                        <p className="text-xs text-slate-400 font-medium">
+                        <p className="text-xs text-ink-soft font-medium">
                           {tx.date} &middot; {debitSplit?.account_id}
                         </p>
                         {tx.job_tag && (
@@ -226,7 +226,7 @@ export default function PendingReview() {
                         )}
                       </div>
                     </div>
-                    <span className={`font-bold ${isExpense ? 'text-red-600' : 'text-emerald-600'}`}>
+                    <span className={`font-bold ${isExpense ? 'text-red-600' : 'text-income'}`}>
                     {isExpense ? '-' : '+'}{formatCurrency(Math.abs(debitSplit?.amount || 0), region)}
                     </span>
                   </div>
@@ -240,14 +240,14 @@ export default function PendingReview() {
                     </button>
                     <button
                       onClick={() => startEdit(tx)}
-                      className="px-3 py-2 bg-slate-100 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
+                      className="px-3 py-2 bg-slate-100 border border-line text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
                     >
                       <Edit3 className="w-4 h-4" />
                     </button>
                     {tx.attachment_id && (
                       <button
                         onClick={() => handlePreviewAttachment(tx.attachment_id!)}
-                        className="px-3 py-2 bg-slate-100 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
+                        className="px-3 py-2 bg-slate-100 border border-line text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
                       >
                         <Eye className="w-4 h-4" />
                       </button>

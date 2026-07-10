@@ -64,7 +64,7 @@ export default function BudgetsManager({ onBack }: { onBack: () => void }) {
       </p>
 
       {/* Add */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">New budget</p>
         <label className="block text-xs text-slate-500">Category
           <select value={categoryAccount} onChange={(e) => setCategoryAccount(e.target.value)} className="mt-1 w-full border-2 border-slate-300 rounded-lg px-2 py-2 text-sm bg-white">
@@ -85,14 +85,14 @@ export default function BudgetsManager({ onBack }: { onBack: () => void }) {
 
       {/* List with progress */}
       {rows.length === 0 ? (
-        <p className="text-sm text-slate-400 text-center">No budgets yet.</p>
+        <p className="text-sm text-ink-soft text-center">No budgets yet.</p>
       ) : (
         <div className="space-y-2">
           {rows.map(({ budget, spent, remaining, pct, over }) => (
-            <div key={budget.id} className="bg-white rounded-xl border-2 border-slate-200 p-3 space-y-1.5">
+            <div key={budget.id} className="bg-white rounded-xl border border-line p-3 space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-slate-800 truncate">{nameFor(budget.categoryAccount)}</span>
-                <button onClick={() => remove(budget.id)} className="text-slate-400 hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => remove(budget.id)} className="text-ink-soft hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div

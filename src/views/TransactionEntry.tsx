@@ -4,6 +4,7 @@ import { useApp, useRegionConfig } from '../contexts/AppContext';
 import { useCrypto } from '../contexts/CryptoContext';
 import { createTransaction, makeSimpleSplits, LedgerError } from '../lib/ledger';
 import { parseWithAI, aiParsedToPendingTransaction, type AIParsedTransaction } from '../lib/ai';
+import { getSelectedModel } from '../lib/ai/aiModels';
 import { blobToUint8Array } from '../lib/image';
 import { useAttachment } from '../hooks/useAttachment';
 import { db } from '../lib/db';
@@ -115,6 +116,7 @@ export default function TransactionEntry() {
         region,
         imageData:          receiptImageData || undefined,
         useHighQualityModel: resolveUseHighQuality(hasImage),
+        modelId:            getSelectedModel('scanning'),
       });
 
       // If there's a split suggestion, show the split review UI before committing
@@ -134,11 +136,31 @@ export default function TransactionEntry() {
     }
   };
 
+  // Compress, encrypt and store the current receipt image (if any), returning
+  // its attachment id so it can be linked to the ledger entry it belongs to.
+  const saveReceiptIfAny = async (): Promise<string | undefined> => {
+    if (!receiptFile) return undefined;
+    const compressed = await compressToWebP(receiptFile);
+    const bytes      = await blobToUint8Array(compressed);
+    const encrypted  = await encryptBlob(bytes);
+    const attachmentId = crypto.randomUUID();
+    await db.attachments.add({
+      id:             attachmentId,
+      transaction_id: '',
+      encrypted_iv:   encrypted.iv,
+      encrypted_data: encrypted.ciphertext,
+      mime_type:      'image/webp',
+      created_at:     Date.now(),
+    });
+    return attachmentId;
+  };
+
   const handleConfirmScanned = async () => {
     if (!pendingConfirm) return;
     try {
       const txData = aiParsedToPendingTransaction(pendingConfirm, region);
-      await createTransaction({ ...txData.txFields, trade: selectedTrade || undefined }, txData.splits);
+      const attachmentId = await saveReceiptIfAny();
+      await createTransaction({ ...txData.txFields, trade: selectedTrade || undefined, attachment_id: attachmentId }, txData.splits);
       setPendingConfirm(null);
       setAiInput('');
       setReceiptFile(null);
@@ -166,6 +188,7 @@ export default function TransactionEntry() {
   const handleCommitSplitSuggestion = async () => {
     if (!parsedResult) return;
     try {
+      const attachmentId = await saveReceiptIfAny();
       if (splitChoice === 'split' && parsedResult.split_suggestion && parsedResult.split_suggestion.length > 1) {
         for (const s of parsedResult.split_suggestion) {
           const splits = makeSimpleSplits(s.debit_account, s.credit_account, s.amount);
@@ -174,12 +197,12 @@ export default function TransactionEntry() {
             description:    s.description,
             pending_review: true,
             job_tag:        s.job_tag,
-            attachment_id:  undefined,
+            attachment_id:  attachmentId,
           }, splits);
         }
       } else {
         const txData = aiParsedToPendingTransaction(parsedResult, region);
-        await createTransaction(txData.txFields, txData.splits);
+        await createTransaction({ ...txData.txFields, attachment_id: attachmentId }, txData.splits);
       }
       setParsedResult(null);
       setAiInput('');
@@ -263,7 +286,7 @@ export default function TransactionEntry() {
         </div>
       )}
 
-      <div className="flex bg-slate-100 rounded-xl p-1 border border-slate-200">
+      <div className="flex bg-slate-100 rounded-xl p-1 border border-line">
         <button
           onClick={() => setMode('ai')}
           className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-bold transition-all ${
@@ -295,13 +318,13 @@ export default function TransactionEntry() {
                 The AI read this from your entry. Please confirm the <span className="font-semibold">amount</span> is correct before saving.
               </p>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-1">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Amount</p>
+              <div className="bg-slate-50 border border-line rounded-lg p-3 space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Amount</p>
                 <p className="text-2xl font-bold text-slate-900">{formatCurrency(pendingConfirm.amount, region)}</p>
                 <div className="pt-1 space-y-0.5">
-                  <p className="text-sm text-slate-700 truncate"><span className="text-slate-400">Description:</span> {pendingConfirm.description}</p>
-                  <p className="text-sm text-slate-700"><span className="text-slate-400">Date:</span> {pendingConfirm.date}</p>
-                  <p className="text-sm text-slate-700 truncate"><span className="text-slate-400">Category:</span> {pendingConfirm.debit_account}</p>
+                  <p className="text-sm text-slate-700 truncate"><span className="text-ink-soft">Description:</span> {pendingConfirm.description}</p>
+                  <p className="text-sm text-slate-700"><span className="text-ink-soft">Date:</span> {pendingConfirm.date}</p>
+                  <p className="text-sm text-slate-700 truncate"><span className="text-ink-soft">Category:</span> {pendingConfirm.debit_account}</p>
                 </div>
               </div>
 
@@ -337,7 +360,7 @@ export default function TransactionEntry() {
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-[10px] text-slate-400">It'll be saved to your review queue, still marked for a final check.</p>
+              <p className="text-[10px] text-ink-soft">It'll be saved to your review queue, still marked for a final check.</p>
             </div>
           )}
 
@@ -405,17 +428,17 @@ export default function TransactionEntry() {
 
           {/* Line items panel */}
           {parsedResult && parsedResult.line_items && parsedResult.line_items.length > 0 && !parsedResult.split_suggestion && (
-            <div className="bg-slate-50 border-2 border-slate-200 rounded-xl p-3 space-y-2">
+            <div className="bg-slate-50 border border-line rounded-xl p-3 space-y-2">
               <div className="flex items-center gap-2">
                 <List className="w-4 h-4 text-slate-500" />
                 <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Line Items Extracted</p>
               </div>
               {parsedResult.line_items.map((item, i) => (
-                <div key={i} className="flex items-center justify-between text-xs border-b border-slate-100 pb-1.5 last:border-0 last:pb-0">
+                <div key={i} className="flex items-center justify-between text-xs border-b border-line pb-1.5 last:border-0 last:pb-0">
                   <div className="min-w-0 flex-1">
                     <span className="font-semibold text-slate-800">{item.description}</span>
-                    {item.quantity && <span className="text-slate-400 ml-1">× {item.quantity}</span>}
-                    {item.account && <p className="text-[10px] text-slate-400 truncate">{item.account}</p>}
+                    {item.quantity && <span className="text-ink-soft ml-1">× {item.quantity}</span>}
+                    {item.account && <p className="text-[10px] text-ink-soft truncate">{item.account}</p>}
                   </div>
                   <span className="font-bold text-slate-900 ml-2">{formatCurrency(item.total, region)}</span>
                 </div>
@@ -423,21 +446,35 @@ export default function TransactionEntry() {
             </div>
           )}
 
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-600/30 transition-colors"
+          >
+            <Camera className="w-5 h-5" /> Scan a receipt
+          </button>
+          <p className="text-[11px] text-ink-soft text-center -mt-1">Snap a photo and the AI reads the amount, date &amp; category — you approve it.</p>
+
+          <div className="flex items-center gap-2 py-1">
+            <div className="flex-1 h-px bg-line" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-ink-soft">or type it</span>
+            <div className="flex-1 h-px bg-line" />
+          </div>
+
           <textarea
             value={aiInput}
             onChange={(e) => { setAiInput(e.target.value); setAiError(''); }}
             placeholder='e.g. "Paid £20 for parking at terminal" or paste a receipt, invoice, or handwritten note'
             rows={3}
-            className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-900 resize-none font-medium"
+            className="w-full px-4 py-3 border border-line rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-slate-900 resize-none font-medium"
           />
 
           {receiptFile && (
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
-              <Camera className="w-4 h-4 text-slate-400 flex-shrink-0" />
+            <div className="flex items-center gap-2 bg-slate-50 border border-line rounded-lg px-3 py-2">
+              <Camera className="w-4 h-4 text-ink-soft flex-shrink-0" />
               <span className="text-xs font-medium text-slate-600 truncate flex-1">{receiptFile.name}</span>
               <button
                 onClick={() => { setReceiptFile(null); setReceiptImageData(null); }}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-ink-soft hover:text-slate-600"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -470,7 +507,7 @@ export default function TransactionEntry() {
           </div>
 
           {/* Status line — always shows model in use */}
-          <p className="text-xs text-slate-400 font-medium">
+          <p className="text-xs text-ink-soft font-medium">
             {apiKey
               ? `Using your API key · ${modelLabel}`
               : 'Add your OpenAI key in Settings to enable AI parsing.'}
@@ -484,7 +521,7 @@ export default function TransactionEntry() {
         </div>
       ) : (
         <div className="space-y-3">
-          <div className="flex bg-slate-100 rounded-xl p-1 border border-slate-200">
+          <div className="flex bg-slate-100 rounded-xl p-1 border border-line">
             <button
               onClick={() => setIsIncome(false)}
               className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
@@ -496,7 +533,7 @@ export default function TransactionEntry() {
             <button
               onClick={() => setIsIncome(true)}
               className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
-                isIncome ? 'bg-white shadow text-emerald-600' : 'text-slate-500'
+                isIncome ? 'bg-white shadow text-income' : 'text-slate-500'
               }`}
             >
               Income
@@ -558,7 +595,7 @@ export default function TransactionEntry() {
                     <option key={a.id} value={a.id}>{a.name}</option>
                   ))}
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-soft pointer-events-none" />
             </div>
             {ruleHint && (
               <p className="mt-1 text-xs text-brand-600 flex items-center gap-1">

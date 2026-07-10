@@ -28,7 +28,7 @@ export default function AICostCard() {
   if (!cost) return null;
 
   return (
-    <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-3">
+    <div className="bg-white rounded-xl border border-line p-4 space-y-3">
       <div className="flex items-center gap-2">
         <Coins className="w-5 h-5 text-brand-600" />
         <h3 className="font-bold text-slate-900">AI spend — {thisMonthLabel()}</h3>
@@ -43,11 +43,11 @@ export default function AICostCard() {
       </div>
 
       {cost.rows.length > 0 && (
-        <div className="space-y-1.5 border-t border-slate-100 pt-2">
+        <div className="space-y-1.5 border-t border-line pt-2">
           {cost.rows.map((r) => (
             <div key={r.modelId} className="flex items-center justify-between text-sm">
               <span className="text-slate-600">{getModel(r.modelId)?.label ?? r.modelId}
-                <span className="text-slate-400"> · {r.calls}×</span>
+                <span className="text-ink-soft"> · {r.calls}×</span>
               </span>
               <span className="font-semibold text-slate-800">
                 {r.costUSD === null ? "—" : usd(r.costUSD)}
@@ -58,10 +58,10 @@ export default function AICostCard() {
       )}
 
       {cost.rows.length === 0 && (
-        <p className="text-sm text-slate-400">No AI usage yet this month.</p>
+        <p className="text-sm text-ink-soft">No AI usage yet this month.</p>
       )}
 
-      <p className="text-[10px] text-slate-400 flex items-start gap-1">
+      <p className="text-[10px] text-ink-soft flex items-start gap-1">
         <Info className="w-3 h-3 mt-0.5 shrink-0" />
         {cost.anyActual
           ? "Actual cost reported by OpenRouter for your calls"

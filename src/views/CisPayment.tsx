@@ -78,7 +78,7 @@ export default function CisPayment({ onBack }: { onBack: () => void }) {
         applies to the <span className="font-semibold">labour</span> part only, not materials.
       </p>
 
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <input value={subcontractor} onChange={(e) => setSubcontractor(e.target.value)} placeholder="Subcontractor name" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
         <div className="flex gap-2">
           <label className="flex-1 text-xs text-slate-500">Labour
@@ -101,17 +101,17 @@ export default function CisPayment({ onBack }: { onBack: () => void }) {
       </div>
 
       {/* Live calculation */}
-      <div className="bg-slate-50 border-2 border-slate-200 rounded-xl p-4 space-y-1">
+      <div className="bg-slate-50 border border-line rounded-xl p-4 space-y-1">
         <Row label="Gross (labour + materials)" value={m(calc.gross)} />
         <Row label={`CIS deduction (${Math.round(calc.rate * 100)}% of labour)`} value={`- ${m(calc.deduction)}`} warn />
-        <div className="border-t border-slate-200 pt-1">
+        <div className="border-t border-line pt-1">
           <Row label="Net to pay subcontractor" value={m(calc.net)} strong />
         </div>
       </div>
 
       {saved && (
         <div className="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-3 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <CheckCircle2 className="w-4 h-4 text-income" />
           <p className="text-sm text-emerald-700 font-semibold">Payment recorded (in your review queue).</p>
         </div>
       )}
@@ -125,10 +125,10 @@ export default function CisPayment({ onBack }: { onBack: () => void }) {
       </button>
 
       {/* YTD + signpost */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-1">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-1">
         <p className="text-[11px] text-slate-500 uppercase tracking-wider font-bold">CIS deducted this tax year</p>
         <p className="text-2xl font-bold text-slate-900">{m(ytd)}</p>
-        <p className="text-[11px] text-slate-400">Owed to HMRC on behalf of your subcontractors.</p>
+        <p className="text-[11px] text-ink-soft">Owed to HMRC on behalf of your subcontractors.</p>
       </div>
 
       <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 flex gap-2">

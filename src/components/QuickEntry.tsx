@@ -74,7 +74,7 @@ export default function QuickEntry() {
   }
 
   return (
-    <div className="bg-white rounded-xl border-2 border-slate-200 p-3 space-y-2">
+    <div className="bg-white rounded-xl border border-line p-3 space-y-2">
       <div className="flex items-center gap-2">
         <Zap className="w-4 h-4 text-brand-600" />
         <span className="text-sm font-bold text-slate-900">Quick add</span>
@@ -95,7 +95,7 @@ export default function QuickEntry() {
         <button onClick={submit} disabled={!text.trim()} className="px-4 bg-brand-600 text-white rounded-lg text-sm font-bold disabled:opacity-50">Add</button>
       </div>
       {flash && <p className="text-[11px] text-slate-500">{flash}</p>}
-      <p className="text-[10px] text-slate-400">Adds to your review queue. Category is filled by your rules; you can adjust it there.</p>
+      <p className="text-[10px] text-ink-soft">Adds to your review queue. Category is filled by your rules; you can adjust it there.</p>
     </div>
   );
 }

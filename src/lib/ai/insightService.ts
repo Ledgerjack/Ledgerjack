@@ -90,3 +90,49 @@ export async function generateInsight(
 
   return or.content.trim() || "No explanation was returned.";
 }
+
+/** Build the same authoritative data block used for explanations. */
+function dataBlockFor(metrics: FinancialMetrics, region: TaxRegion) {
+  const cfg = TAX_REGIONS[region];
+  return {
+    country: cfg.label,
+    currencySymbol: cfg.currencySymbol,
+    taxTerm: taxTerm(region),
+    period: { from: metrics.from, to: metrics.to },
+    income: metrics.income,
+    expenses: metrics.expenses,
+    netProfit: metrics.net,
+    netMarginPercent: metrics.netMarginPct,
+    expenseRatioPercent: metrics.expenseRatioPct,
+    topExpenseCategories: metrics.topExpenses,
+    topIncomeSources: metrics.topIncome,
+    incomeConcentrationPercent: metrics.incomeConcentrationPct,
+    approvedTransactions: metrics.transactionCount,
+    stillAwaitingReview: metrics.pendingCount,
+    lastSixMonths: metrics.monthly,
+  };
+}
+
+/** Answer a follow-up question about the numbers, under the same no-invention discipline. */
+export async function askFollowUp(
+  metrics: FinancialMetrics,
+  region: TaxRegion,
+  apiKey: string,
+  modelId: string,
+  question: string,
+): Promise<string> {
+  if (!apiKey || apiKey.trim() === "") {
+    throw new Error("Add your OpenRouter key in Settings to ask a question.");
+  }
+  const model = getModel(modelId);
+  if (!model) throw new Error("Unknown model.");
+
+  const messages = [
+    { role: "system" as const, content: SYSTEM_PROMPT + "\n\nThe reader may now ask a follow-up question. Answer it briefly using ONLY the DATA. If the answer isn't in the DATA, say so plainly rather than guessing." },
+    { role: "user" as const, content: `DATA:\n${JSON.stringify(dataBlockFor(metrics, region), null, 2)}\n\nQUESTION: ${question}` },
+  ];
+
+  const or = await callOpenRouter(model.id, messages, apiKey, { maxTokens: 600, temperature: 0 });
+  recordUsage(model.id, or.promptTokens, or.completionTokens, or.costUSD).catch(() => { /* best-effort */ });
+  return or.content.trim() || "No answer was returned.";
+}

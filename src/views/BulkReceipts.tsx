@@ -70,20 +70,20 @@ export default function BulkReceipts({ onBack }: { onBack: () => void }) {
       <label className="bg-white rounded-xl border-2 border-dashed border-brand-300 p-6 flex flex-col items-center gap-2 cursor-pointer">
         <Images className="w-8 h-8 text-brand-400" />
         <span className="text-sm font-semibold text-brand-600">Choose photos</span>
-        <span className="text-[11px] text-slate-400">JPG or PNG · multiple allowed</span>
+        <span className="text-[11px] text-ink-soft">JPG or PNG · multiple allowed</span>
         <input type="file" accept="image/*" multiple onChange={onFiles} disabled={busy} className="hidden" />
       </label>
 
       {items.length > 0 && (
         <>
-          {done > 0 && <p className="text-sm text-emerald-600 font-semibold">{done} added to your review queue.</p>}
+          {done > 0 && <p className="text-sm text-income font-semibold">{done} added to your review queue.</p>}
           <div className="space-y-1.5">
             {items.map((it, i) => (
-              <div key={i} className="bg-white rounded-lg border-2 border-slate-200 p-2.5 flex items-center gap-2">
+              <div key={i} className="bg-white rounded-lg border border-line p-2.5 flex items-center gap-2">
                 <span className="min-w-0 flex-1 text-xs text-slate-600 truncate">{it.name}</span>
-                {it.status === "queued" && <span className="text-[11px] text-slate-400">Queued</span>}
+                {it.status === "queued" && <span className="text-[11px] text-ink-soft">Queued</span>}
                 {it.status === "processing" && <Loader2 className="w-4 h-4 text-brand-500 animate-spin" />}
-                {it.status === "done" && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
+                {it.status === "done" && <CheckCircle2 className="w-4 h-4 text-income" />}
                 {it.status === "error" && <span className="flex items-center gap-1 text-[11px] text-red-500"><AlertCircle className="w-3.5 h-3.5" /> {it.message}</span>}
               </div>
             ))}

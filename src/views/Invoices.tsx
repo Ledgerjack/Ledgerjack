@@ -89,7 +89,7 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
     return (
       <div className="space-y-4 pb-24">
         <Header onBack={() => setMode("list")} icon={<Building2 className="w-5 h-5 text-brand-600" />} title="Your business details" />
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+        <div className="bg-white rounded-xl border border-line p-4 space-y-2">
           {(["name", "address", "email", "phone", "taxNumber", "bankDetails"] as const).map((f) => (
             <label key={f} className="block text-xs text-slate-500 capitalize">
               {f === "taxNumber" ? "VAT / tax number" : f === "bankDetails" ? "Payment / bank details" : f}
@@ -117,15 +117,15 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
       <div className="space-y-4 pb-24">
         <Header onBack={() => setMode("list")} icon={<FileText className="w-5 h-5 text-brand-600" />} title="Client statements" />
         {byClient.size === 0 ? (
-          <p className="text-sm text-slate-400 text-center">No invoices yet.</p>
+          <p className="text-sm text-ink-soft text-center">No invoices yet.</p>
         ) : [...byClient.entries()].map(([name, list]) => {
           const outstanding = list.filter((i) => i.status !== "paid").reduce((s, i) => s + computeTotals(i).total, 0);
           const sym = symOf(list[0]);
           return (
-            <div key={name} className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-center justify-between gap-2">
+            <div key={name} className="bg-white rounded-xl border border-line p-3 flex items-center justify-between gap-2">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-slate-800 truncate">{name}</p>
-                <p className="text-[11px] text-slate-400">{list.length} invoices · outstanding {formatMoney(outstanding, sym)}</p>
+                <p className="text-[11px] text-ink-soft">{list.length} invoices · outstanding {formatMoney(outstanding, sym)}</p>
               </div>
               <button onClick={() => printStatement(name, list, profile, sym)} className="text-brand-600 text-sm font-semibold flex items-center gap-1 shrink-0"><Printer className="w-4 h-4" /> Statement</button>
             </div>
@@ -144,7 +144,7 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
       <div className="space-y-4 pb-24">
         <Header onBack={() => { setMode("list"); setDraft(null); }} icon={<FileText className="w-5 h-5 text-brand-600" />} title={draft.number} />
 
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+        <div className="bg-white rounded-xl border border-line p-4 space-y-2">
           {clients.length > 0 && (
             <select
               defaultValue=""
@@ -165,24 +165,24 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
         </div>
 
         {/* Line items */}
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+        <div className="bg-white rounded-xl border border-line p-4 space-y-2">
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Items</p>
           {draft.lines.map((l, i) => (
-            <div key={`${i}-of-${draft.lines.length}`} className="space-y-1 border-b border-slate-100 pb-2 last:border-0">
+            <div key={`${i}-of-${draft.lines.length}`} className="space-y-1 border-b border-line pb-2 last:border-0">
               <input value={l.description} onChange={(e) => setLine(i, { description: e.target.value })} placeholder="Description" className="w-full border-2 border-slate-300 rounded-lg px-3 py-1.5 text-sm" />
               <div className="flex gap-2 items-center">
                 <input type="number" min="0" value={l.quantity} onChange={(e) => setLine(i, { quantity: parseFloat(e.target.value) || 0 })} placeholder="Qty" className="w-16 border-2 border-slate-300 rounded-lg px-2 py-1.5 text-sm" />
-                <span className="text-slate-400 text-sm">×</span>
+                <span className="text-ink-soft text-sm">×</span>
                 <input inputMode="decimal" defaultValue={l.unitPrice ? (l.unitPrice / 100).toFixed(2) : ""} onBlur={(e) => setLine(i, { unitPrice: parseCurrencyInput(e.target.value) })} placeholder="Unit price" className="flex-1 border-2 border-slate-300 rounded-lg px-2 py-1.5 text-sm" />
                 <span className="text-sm font-semibold text-slate-700 w-20 text-right">{formatMoney(Math.round(l.quantity * l.unitPrice), symOf(draft))}</span>
-                {draft.lines.length > 1 && <button onClick={() => setDraft({ ...draft, lines: draft.lines.filter((_, idx) => idx !== i) })} className="text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>}
+                {draft.lines.length > 1 && <button onClick={() => setDraft({ ...draft, lines: draft.lines.filter((_, idx) => idx !== i) })} className="text-ink-soft hover:text-red-500"><Trash2 className="w-4 h-4" /></button>}
               </div>
             </div>
           ))}
           <button onClick={() => setDraft({ ...draft, lines: [...draft.lines, { description: "", quantity: 1, unitPrice: 0 }] })} className="flex items-center gap-1 text-sm text-brand-600 font-semibold"><Plus className="w-4 h-4" /> Add item</button>
         </div>
 
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+        <div className="bg-white rounded-xl border border-line p-4 space-y-2">
           <div className="flex gap-2">
             <label className="flex-1 text-xs text-slate-500">Tax rate % (optional)
               <input type="number" min="0" value={draft.taxRatePct ?? ""} onChange={(e) => setDraft({ ...draft, taxRatePct: e.target.value ? parseFloat(e.target.value) : undefined })} placeholder="e.g. 20" className="mt-1 w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
@@ -214,27 +214,27 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
     <div className="space-y-4 pb-24">
       <Header onBack={onBack} icon={<FileText className="w-5 h-5 text-brand-600" />} title="Invoices" />
 
-      <button onClick={() => setMode("profile")} className="w-full flex items-center gap-2 text-left bg-white rounded-xl border-2 border-slate-200 p-3">
-        <Building2 className="w-4 h-4 text-slate-400" />
+      <button onClick={() => setMode("profile")} className="w-full flex items-center gap-2 text-left bg-white rounded-xl border border-line p-3">
+        <Building2 className="w-4 h-4 text-ink-soft" />
         <span className="text-sm text-slate-600 flex-1">{profile.name ? `From: ${profile.name}` : "Set your business details"}</span>
-        <Pencil className="w-4 h-4 text-slate-400" />
+        <Pencil className="w-4 h-4 text-ink-soft" />
       </button>
 
       <div className="grid grid-cols-3 gap-2">
-        <button onClick={() => onNavigate('clients')} className="flex items-center justify-center gap-1 bg-white border-2 border-slate-200 text-slate-700 py-2 rounded-lg text-xs font-semibold">
+        <button onClick={() => onNavigate('clients')} className="flex items-center justify-center gap-1 bg-white border border-line text-slate-700 py-2 rounded-lg text-xs font-semibold">
           <Users className="w-4 h-4" /> Clients
         </button>
-        <button onClick={() => onNavigate('invoices-recurring')} className="flex items-center justify-center gap-1 bg-white border-2 border-slate-200 text-slate-700 py-2 rounded-lg text-xs font-semibold">
+        <button onClick={() => onNavigate('invoices-recurring')} className="flex items-center justify-center gap-1 bg-white border border-line text-slate-700 py-2 rounded-lg text-xs font-semibold">
           <Repeat className="w-4 h-4" /> Recurring
         </button>
-        <button onClick={() => setMode('statements')} className="flex items-center justify-center gap-1 bg-white border-2 border-slate-200 text-slate-700 py-2 rounded-lg text-xs font-semibold">
+        <button onClick={() => setMode('statements')} className="flex items-center justify-center gap-1 bg-white border border-line text-slate-700 py-2 rounded-lg text-xs font-semibold">
           <FileText className="w-4 h-4" /> Statements
         </button>
       </div>
 
-      <div className="flex p-0.5 bg-slate-100 rounded-lg border border-slate-200">
-        <button onClick={() => setFilter('invoice')} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${filter === 'invoice' ? 'bg-white shadow-sm text-slate-900 border border-slate-200' : 'text-slate-500'}`}>Invoices</button>
-        <button onClick={() => setFilter('quote')} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${filter === 'quote' ? 'bg-white shadow-sm text-slate-900 border border-slate-200' : 'text-slate-500'}`}>Quotes</button>
+      <div className="flex p-0.5 bg-slate-100 rounded-lg border border-line">
+        <button onClick={() => setFilter('invoice')} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${filter === 'invoice' ? 'bg-white shadow-sm text-slate-900 border border-line' : 'text-slate-500'}`}>Invoices</button>
+        <button onClick={() => setFilter('quote')} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${filter === 'quote' ? 'bg-white shadow-sm text-slate-900 border border-line' : 'text-slate-500'}`}>Quotes</button>
       </div>
 
       <button onClick={newInvoice} className="w-full flex items-center justify-center gap-1.5 bg-brand-600 text-white py-2.5 rounded-lg text-sm font-bold"><Plus className="w-4 h-4" /> {filter === 'quote' ? 'New quote' : 'New invoice'}</button>
@@ -251,14 +251,14 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
       })()}
 
       {invoices.filter((i) => (i.kind ?? "invoice") === filter).length === 0 ? (
-        <p className="text-sm text-slate-400 text-center">No {filter === "quote" ? "quotes" : "invoices"} yet.</p>
+        <p className="text-sm text-ink-soft text-center">No {filter === "quote" ? "quotes" : "invoices"} yet.</p>
       ) : (
         <div className="space-y-2">
           {invoices.filter((i) => (i.kind ?? "invoice") === filter).map((inv) => {
             const t = computeTotals(inv);
             const isQuote = (inv.kind ?? "invoice") === "quote";
             return (
-              <div key={inv.id} className="bg-white rounded-xl border-2 border-slate-200 p-3 space-y-2">
+              <div key={inv.id} className="bg-white rounded-xl border border-line p-3 space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
                 <div className="flex gap-2 text-xs flex-wrap">
                   <button onClick={() => editInvoice(inv)} className="flex items-center gap-1 text-slate-600 font-semibold"><Pencil className="w-3.5 h-3.5" /> Edit</button>
                   <button onClick={() => printInvoice(inv, profile, symOf(inv))} className="flex items-center gap-1 text-slate-600 font-semibold"><Printer className="w-3.5 h-3.5" /> PDF</button>
-                  <button onClick={() => shareViaWhatsApp(`${isQuote ? "Quote" : "Invoice"} ${inv.number} for ${formatMoney(t.total, symOf(inv))}${inv.status !== "paid" && !isQuote ? `, due ${inv.dueDate}` : ""}.${profile.name ? ` — ${profile.name}` : ""}`)} className="flex items-center gap-1 text-emerald-600 font-semibold">WhatsApp</button>
+                  <button onClick={() => shareViaWhatsApp(`${isQuote ? "Quote" : "Invoice"} ${inv.number} for ${formatMoney(t.total, symOf(inv))}${inv.status !== "paid" && !isQuote ? `, due ${inv.dueDate}` : ""}.${profile.name ? ` — ${profile.name}` : ""}`)} className="flex items-center gap-1 text-income font-semibold">WhatsApp</button>
                   <button
                     onClick={() => shareViaEmail(
                       `${isQuote ? "Quote" : "Invoice"} ${inv.number}${profile.name ? ` from ${profile.name}` : ""}`,
@@ -288,17 +288,17 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
                   {isQuote ? (
                     <button onClick={() => convertToInvoice(inv)} className="flex items-center gap-1 text-brand-600 font-semibold"><Check className="w-3.5 h-3.5" /> To invoice</button>
                   ) : inv.status !== "paid"
-                    ? <button onClick={() => setStatus(inv.id, "paid")} className="flex items-center gap-1 text-emerald-600 font-semibold"><Check className="w-3.5 h-3.5" /> Mark paid</button>
-                    : <button onClick={() => setStatus(inv.id, "sent")} className="text-slate-400 font-semibold">Mark unpaid</button>}
+                    ? <button onClick={() => setStatus(inv.id, "paid")} className="flex items-center gap-1 text-income font-semibold"><Check className="w-3.5 h-3.5" /> Mark paid</button>
+                    : <button onClick={() => setStatus(inv.id, "sent")} className="text-ink-soft font-semibold">Mark unpaid</button>}
                   {isOverdue(inv) && <button onClick={() => remind(inv)} className="flex items-center gap-1 text-red-600 font-semibold">Remind</button>}
-                  <button onClick={() => del(inv.id)} className="flex items-center gap-1 text-slate-400 hover:text-red-500 ml-auto"><Trash2 className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => del(inv.id)} className="flex items-center gap-1 text-ink-soft hover:text-red-500 ml-auto"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
             );
           })}
         </div>
       )}
-      <p className="text-[11px] text-slate-400 text-center">"PDF" opens a print view — choose "Save as PDF" to download or send.</p>
+      <p className="text-[11px] text-ink-soft text-center">"PDF" opens a print view — choose "Save as PDF" to download or send.</p>
 
       {qrInvoice && (() => {
         const t = computeTotals(qrInvoice);

@@ -47,7 +47,7 @@ export default function BiometricSetup() {
   }
 
   return (
-    <div className="border-t border-slate-100 pt-3 space-y-2">
+    <div className="border-t border-line pt-3 space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Fingerprint className="w-4 h-4 text-brand-600" />
@@ -61,7 +61,7 @@ export default function BiometricSetup() {
       </div>
 
       {enrolled && (
-        <p className="text-[11px] text-emerald-600 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> On for this device.</p>
+        <p className="text-[11px] text-income flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> On for this device.</p>
       )}
 
       {!enrolled && opening && (

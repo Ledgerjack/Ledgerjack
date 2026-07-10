@@ -31,3 +31,20 @@ export async function nativeShare(title: string, text: string): Promise<boolean>
 export function nativeShareAvailable(): boolean {
   return typeof (navigator as any).share === "function";
 }
+
+/**
+ * Share an actual file via the native share sheet (mobile) — lets the user pick
+ * their email app with the file attached. Returns true if it was shared, false
+ * if file-sharing isn't supported (caller should then fall back to download).
+ */
+export async function nativeShareFile(filename: string, content: string, mimeType: string): Promise<boolean> {
+  const nav = navigator as any;
+  try {
+    const file = new File([content], filename, { type: mimeType });
+    if (typeof nav.canShare === "function" && nav.canShare({ files: [file] }) && typeof nav.share === "function") {
+      await nav.share({ files: [file], title: filename, text: "LedgerJack encrypted backup — email this to yourself to keep it safe." });
+      return true;
+    }
+  } catch { /* user cancelled or unsupported */ }
+  return false;
+}

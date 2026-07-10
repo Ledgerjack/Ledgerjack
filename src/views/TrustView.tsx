@@ -22,14 +22,14 @@ export default function TrustView({ onBack, onOpenBackup }: { onBack: () => void
 
       <div className="space-y-2">
         {APP_PROMISES.map((p) => (
-          <div key={p.title} className="bg-white rounded-xl border-2 border-slate-200 p-4">
+          <div key={p.title} className="bg-white rounded-xl border border-line p-4">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5"><Lock className="w-4 h-4 text-brand-600" /> {p.title}</h3>
             <p className="text-xs text-slate-500 mt-1 leading-relaxed">{p.body}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <h3 className="text-sm font-bold text-slate-900">Your data is yours</h3>
         <p className="text-xs text-slate-500">Export it anytime, no lock-in.</p>
         <button onClick={() => exportTransactionsCSV("0000-01-01", "9999-12-31")} className="w-full flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-sm font-semibold">

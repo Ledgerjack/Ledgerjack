@@ -56,7 +56,7 @@ export default function RecurringInvoices({ onBack }: { onBack: () => void }) {
         you to review and send.
       </p>
 
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">New recurring invoice</p>
         <input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="Client name" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
         <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description (e.g. Monthly retainer)" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
@@ -79,19 +79,19 @@ export default function RecurringInvoices({ onBack }: { onBack: () => void }) {
       </div>
 
       {items.length === 0 ? (
-        <p className="text-sm text-slate-400 text-center">No recurring invoices yet.</p>
+        <p className="text-sm text-ink-soft text-center">No recurring invoices yet.</p>
       ) : (
         <div className="space-y-2">
           {items.map((t) => (
-            <div key={t.id} className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-center gap-2">
+            <div key={t.id} className="bg-white rounded-xl border border-line p-3 flex items-center gap-2">
               <label className="flex items-center gap-2 flex-1 min-w-0">
                 <input type="checkbox" checked={t.enabled} onChange={() => toggle(t.id)} />
                 <span className="min-w-0">
                   <span className="text-sm font-semibold text-slate-800 truncate block">{t.clientName} — {t.lines[0]?.description}</span>
-                  <span className="text-[11px] text-slate-400">{formatCurrency(t.lines[0]?.unitPrice ?? 0, region)} · {t.frequency} · next {t.nextDate}</span>
+                  <span className="text-[11px] text-ink-soft">{formatCurrency(t.lines[0]?.unitPrice ?? 0, region)} · {t.frequency} · next {t.nextDate}</span>
                 </span>
               </label>
-              <button onClick={() => remove(t.id)} className="text-slate-400 hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
+              <button onClick={() => remove(t.id)} className="text-ink-soft hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
             </div>
           ))}
         </div>

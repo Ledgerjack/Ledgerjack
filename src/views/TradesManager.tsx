@@ -66,12 +66,12 @@ export default function TradesManager({ onBack }: { onBack: () => void }) {
       </p>
 
       {/* Add */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">New trade</p>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name (e.g. Plumbing, or Flat rental)" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
-        <div className="flex p-0.5 bg-slate-100 rounded-lg border border-slate-200">
-          <button onClick={() => setType("self-employment")} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${type === "self-employment" ? "bg-white shadow-sm text-slate-900 border border-slate-200" : "text-slate-500"}`}>Self-employment</button>
-          <button onClick={() => setType("property")} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${type === "property" ? "bg-white shadow-sm text-slate-900 border border-slate-200" : "text-slate-500"}`}>Property</button>
+        <div className="flex p-0.5 bg-slate-100 rounded-lg border border-line">
+          <button onClick={() => setType("self-employment")} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${type === "self-employment" ? "bg-white shadow-sm text-slate-900 border border-line" : "text-slate-500"}`}>Self-employment</button>
+          <button onClick={() => setType("property")} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${type === "property" ? "bg-white shadow-sm text-slate-900 border border-line" : "text-slate-500"}`}>Property</button>
         </div>
         <button onClick={add} disabled={!name.trim()} className="w-full flex items-center justify-center gap-1.5 bg-brand-600 text-white py-2 rounded-lg text-sm font-bold disabled:opacity-50">
           <Plus className="w-4 h-4" /> Add trade
@@ -80,29 +80,29 @@ export default function TradesManager({ onBack }: { onBack: () => void }) {
 
       {/* Per-trade P&L */}
       {rows.length === 0 ? (
-        <p className="text-sm text-slate-400 text-center">No trades yet. Add one above.</p>
+        <p className="text-sm text-ink-soft text-center">No trades yet. Add one above.</p>
       ) : (
         <div className="space-y-2">
-          <p className="text-xs text-slate-400">This tax year ({win.from} to {win.to})</p>
+          <p className="text-xs text-ink-soft">This tax year ({win.from} to {win.to})</p>
           {rows.map((r) => {
             const trade = trades.find((t) => t.id === r.tradeId);
             return (
-              <div key={r.tradeId ?? "unassigned"} className="bg-white rounded-xl border-2 border-slate-200 p-3 space-y-1">
+              <div key={r.tradeId ?? "unassigned"} className="bg-white rounded-xl border border-line p-3 space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    {trade?.type === "property" ? <Home className="w-4 h-4 text-slate-400" /> : <Briefcase className="w-4 h-4 text-slate-400" />}
+                    {trade?.type === "property" ? <Home className="w-4 h-4 text-ink-soft" /> : <Briefcase className="w-4 h-4 text-ink-soft" />}
                     <span className="text-sm font-semibold text-slate-800 truncate">{r.name}</span>
                   </div>
                   {trade && (
-                    <button onClick={() => remove(trade.id)} className="text-slate-400 hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={() => remove(trade.id)} className="text-ink-soft hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
                   )}
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-emerald-600">Income {m(r.income)}</span>
+                  <span className="text-income">Income {m(r.income)}</span>
                   <span className="text-red-500">Expenses {m(r.expenses)}</span>
                   <span className="font-bold text-slate-900">Net {m(r.net)}</span>
                 </div>
-                <p className="text-[10px] text-slate-400">{r.transactionCount} transactions</p>
+                <p className="text-[10px] text-ink-soft">{r.transactionCount} transactions</p>
               </div>
             );
           })}

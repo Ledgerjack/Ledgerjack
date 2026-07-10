@@ -71,6 +71,19 @@ export const RECOMMENDED_MODEL_ID = SCANNING_DEFAULT;
 export function getModel(id: string): AIModel | undefined {
   return AI_MODELS.find((m) => m.id === id);
 }
+
+/** The user's chosen model for a role (falls back to the default). */
+export function getSelectedModel(role: AIRole): string {
+  try {
+    const v = localStorage.getItem(`ai_model_${role}`);
+    if (v && getModel(v)?.role === role) return v;
+  } catch { /* localStorage unavailable */ }
+  return role === "scanning" ? SCANNING_DEFAULT : INSIGHTS_DEFAULT;
+}
+
+export function setSelectedModel(role: AIRole, id: string): void {
+  try { localStorage.setItem(`ai_model_${role}`, id); } catch { /* ignore */ }
+}
 export function modelsForRole(role: AIRole): AIModel[] {
   return AI_MODELS.filter((m) => m.role === role);
 }

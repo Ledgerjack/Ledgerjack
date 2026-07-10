@@ -73,17 +73,17 @@ export default function SubmitQuarter({
         Quarter <span className="font-bold">{obligation.periodStartDate} → {obligation.periodEndDate}</span>
       </p>
 
-      {!summary && <p className="text-sm text-slate-400">Adding up your transactions…</p>}
+      {!summary && <p className="text-sm text-ink-soft">Adding up your transactions…</p>}
 
       {summary && result !== "ok" && (
         <>
-          <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+          <div className="bg-white rounded-xl border border-line p-4 space-y-2">
             <Row label="Income" value={gbp(summary.meta.totalIncome)} strong />
             <Row label="Expenses" value={gbp(summary.meta.totalExpenses)} strong />
-            <div className="border-t border-slate-100 pt-2">
+            <div className="border-t border-line pt-2">
               <Row label="Net profit" value={gbp(summary.meta.net)} strong />
             </div>
-            <p className="text-xs text-slate-400">From {summary.meta.transactionCount} approved transactions.</p>
+            <p className="text-xs text-ink-soft">From {summary.meta.transactionCount} approved transactions.</p>
           </div>
 
           <label className="flex items-center gap-2 text-sm text-slate-600">
@@ -111,7 +111,7 @@ export default function SubmitQuarter({
           >
             {busy ? "Submitting…" : "Send to HMRC"}
           </button>
-          <p className="text-xs text-slate-400 text-center">
+          <p className="text-xs text-ink-soft text-center">
             {HMRC_ENV === "sandbox" ? "Practice mode — this is a test submission, not a real one." : "This is a real submission to HMRC."}
           </p>
         </>

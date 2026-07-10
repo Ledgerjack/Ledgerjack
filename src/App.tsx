@@ -20,6 +20,8 @@ import Settings from './views/Settings';
 import HmrcCallback from './views/mtd/HmrcCallback';
 import MtdHub from './views/mtd/MtdHub';
 import Support from './views/Support';
+import ManualFaq from './views/ManualFaq';
+import JobEstimator from './views/JobEstimator';
 import Insights from './views/Insights';
 import Statements from './views/Statements';
 import RulesManager from './views/RulesManager';
@@ -154,12 +156,14 @@ function AppContent() {
           {currentView === 'dashboard'       && <Dashboard onNavigate={(v) => setCurrentView(v as View)} />}
           {currentView === 'new-transaction' && <TransactionEntry />}
           {currentView === 'pending'         && <PendingReview />}
-          {currentView === 'file-cabinet'    && <FileCabinet />}
+          {currentView === 'file-cabinet'    && <FileCabinet onBack={() => setCurrentView('settings')} />}
           {currentView === 'reports'         && <Reports />}
           {currentView === 'mileage'         && <MileageLogger />}
           {currentView === 'settings'        && <Settings onNavigate={setCurrentView} />}
           {currentView === 'mtd'             && <MtdHub onBack={() => setCurrentView('settings')} />}
           {currentView === 'support'         && <Support onBack={() => setCurrentView('settings')} />}
+          {currentView === 'manual'          && <ManualFaq onBack={() => setCurrentView('settings')} />}
+          {currentView === 'job-estimator'   && <JobEstimator onBack={() => setCurrentView('settings')} />}
           {currentView === 'insights'        && <Insights onBack={() => setCurrentView('dashboard')} />}
           {currentView === 'statements'      && <Statements onBack={() => setCurrentView('settings')} />}
           {currentView === 'rules'           && <RulesManager onBack={() => setCurrentView('settings')} />}

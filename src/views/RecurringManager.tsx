@@ -76,11 +76,11 @@ export default function RecurringManager({ onBack }: { onBack: () => void }) {
       </p>
 
       {/* Add */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">New recurring item</p>
-        <div className="flex p-0.5 bg-slate-100 rounded-lg border border-slate-200">
-          <button onClick={() => setIsIncome(false)} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${!isIncome ? "bg-white shadow-sm text-red-600 border border-slate-200" : "text-slate-500"}`}>Expense</button>
-          <button onClick={() => setIsIncome(true)} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${isIncome ? "bg-white shadow-sm text-emerald-600 border border-slate-200" : "text-slate-500"}`}>Income</button>
+        <div className="flex p-0.5 bg-slate-100 rounded-lg border border-line">
+          <button onClick={() => setIsIncome(false)} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${!isIncome ? "bg-white shadow-sm text-red-600 border border-line" : "text-slate-500"}`}>Expense</button>
+          <button onClick={() => setIsIncome(true)} className={`flex-1 py-1.5 text-xs font-semibold rounded-md ${isIncome ? "bg-white shadow-sm text-income border border-line" : "text-slate-500"}`}>Income</button>
         </div>
         <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description (e.g. Office rent)" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
         <div className="flex gap-2">
@@ -114,21 +114,21 @@ export default function RecurringManager({ onBack }: { onBack: () => void }) {
 
       {/* List */}
       {templates.length === 0 ? (
-        <p className="text-sm text-slate-400 text-center">No recurring items yet.</p>
+        <p className="text-sm text-ink-soft text-center">No recurring items yet.</p>
       ) : (
         <div className="space-y-2">
           {templates.map((t) => (
-            <div key={t.id} className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-center gap-2">
+            <div key={t.id} className="bg-white rounded-xl border border-line p-3 flex items-center gap-2">
               <label className="flex items-center gap-2 flex-1 min-w-0">
                 <input type="checkbox" checked={t.enabled} onChange={() => toggle(t.id)} />
                 <span className="min-w-0">
                   <span className="text-sm font-semibold text-slate-800 truncate block">{t.description}</span>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-ink-soft">
                     {formatCurrency(t.amount, region)} · {t.frequency} · next {t.nextDate} · {nameFor(t.categoryAccount)}
                   </span>
                 </span>
               </label>
-              <button onClick={() => remove(t.id)} className="text-slate-400 hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
+              <button onClick={() => remove(t.id)} className="text-ink-soft hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
             </div>
           ))}
         </div>

@@ -106,16 +106,16 @@ export default function MtdHub({ onBack }: { onBack: () => void }) {
         )}
       </div>
 
-      {connected === null && <p className="text-sm text-slate-400">Loading…</p>}
+      {connected === null && <p className="text-sm text-ink-soft">Loading…</p>}
 
       {connected === false && (
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-4">
+        <div className="bg-white rounded-xl border border-line p-4">
           <ConnectHmrc />
         </div>
       )}
 
       {connected && !nino && (
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-3">
+        <div className="bg-white rounded-xl border border-line p-4 space-y-3">
           <h3 className="font-bold text-slate-900">Your National Insurance number</h3>
           <p className="text-xs text-slate-500">HMRC needs this to match your submissions. It's stored encrypted on your device.</p>
           <input
@@ -139,14 +139,14 @@ export default function MtdHub({ onBack }: { onBack: () => void }) {
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
-          {loading && <p className="text-sm text-slate-400">Checking with HMRC…</p>}
+          {loading && <p className="text-sm text-ink-soft">Checking with HMRC…</p>}
 
           {!loading && obligations.length === 0 && !error && (
             <p className="text-sm text-slate-500">No quarterly updates are due in this tax year yet.</p>
           )}
 
           {obligations.map((o, i) => (
-            <div key={i} className="bg-white rounded-xl border-2 border-slate-200 p-4 flex items-center justify-between">
+            <div key={i} className="bg-white rounded-xl border border-line p-4 flex items-center justify-between">
               <div>
                 <p className="font-semibold text-slate-900 text-sm">
                   {o.periodStartDate} → {o.periodEndDate}
@@ -154,7 +154,7 @@ export default function MtdHub({ onBack }: { onBack: () => void }) {
                 <p className="text-xs text-slate-500">Due {o.dueDate}</p>
               </div>
               {o.status === "Fulfilled" ? (
-                <span className="text-xs font-bold text-emerald-600 flex items-center gap-1"><ShieldCheck className="w-4 h-4" /> Submitted</span>
+                <span className="text-xs font-bold text-income flex items-center gap-1"><ShieldCheck className="w-4 h-4" /> Submitted</span>
               ) : (
                 <button
                   onClick={() => { setSelected(o); setScreen("submit"); }}
@@ -167,10 +167,10 @@ export default function MtdHub({ onBack }: { onBack: () => void }) {
           ))}
 
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <button onClick={() => setScreen("calc")} className="bg-white border-2 border-slate-200 rounded-xl p-3 text-sm font-semibold text-slate-700">
+            <button onClick={() => setScreen("calc")} className="bg-white border border-line rounded-xl p-3 text-sm font-semibold text-slate-700">
               View tax estimate
             </button>
-            <button onClick={() => setScreen("final")} className="bg-white border-2 border-slate-200 rounded-xl p-3 text-sm font-semibold text-slate-700">
+            <button onClick={() => setScreen("final")} className="bg-white border border-line rounded-xl p-3 text-sm font-semibold text-slate-700">
               Final declaration
             </button>
           </div>

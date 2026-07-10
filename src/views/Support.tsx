@@ -75,14 +75,14 @@ export default function Support({ onBack }: { onBack: () => void }) {
             className={`rounded-xl p-3 text-sm ${
               t.role === "user"
                 ? "bg-brand-600 text-white ml-8"
-                : "bg-white border-2 border-slate-200 text-slate-800 mr-8"
+                : "bg-white border border-line text-slate-800 mr-8"
             }`}
           >
             {t.content}
           </div>
         ))}
         {loading && (
-          <div className="flex items-center gap-2 text-slate-400 text-sm mr-8">
+          <div className="flex items-center gap-2 text-ink-soft text-sm mr-8">
             <Loader2 className="w-4 h-4 animate-spin" /> thinking…
           </div>
         )}

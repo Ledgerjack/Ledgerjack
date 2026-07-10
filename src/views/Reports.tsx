@@ -56,8 +56,8 @@ function JobProfitabilityExplorer({
   const selectedRow = rows.find((r) => r.tag === selectedTag);
 
   return (
-    <div className="bg-white rounded-xl border-2 border-slate-200 overflow-hidden">
-      <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
+    <div className="bg-white rounded-xl border border-line overflow-hidden">
+      <div className="px-5 py-4 border-b border-line flex items-center gap-2">
         <BarChart2 className="w-5 h-5 text-brand-600" />
         <h3 className="font-bold text-slate-900">Job Profitability Explorer</h3>
       </div>
@@ -73,14 +73,14 @@ function JobProfitabilityExplorer({
               className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
                 isSelected
                   ? 'border-brand-400 bg-brand-50'
-                  : 'border-slate-100 hover:border-slate-200 bg-slate-50/50 hover:bg-slate-50'
+                  : 'border-line hover:border-line bg-slate-50/50 hover:bg-slate-50'
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-sm font-semibold text-slate-900 truncate max-w-[60%]">{row.tag}</span>
                 <span
                   className={`text-sm font-bold ${
-                    row.net >= 0 ? 'text-emerald-600' : 'text-red-600'
+                    row.net >= 0 ? 'text-income' : 'text-red-600'
                   }`}
                 >
                   {row.net >= 0 ? '+' : ''}{formatCurrency(row.net, region)}
@@ -98,15 +98,15 @@ function JobProfitabilityExplorer({
               {isSelected && selectedRow && (
                 <div className="mt-3 grid grid-cols-3 gap-2 pt-2 border-t border-brand-200">
                   <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Revenue</p>
-                    <p className="text-xs font-bold text-emerald-600">{formatCurrency(selectedRow.income, region)}</p>
+                    <p className="text-[10px] font-bold text-ink-soft uppercase tracking-wider">Revenue</p>
+                    <p className="text-xs font-bold text-income">{formatCurrency(selectedRow.income, region)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Expenses</p>
-                    <p className="text-xs font-bold text-red-500">{formatCurrency(selectedRow.expenses, region)}</p>
+                    <p className="text-[10px] font-bold text-ink-soft uppercase tracking-wider">Expenses</p>
+                    <p className="text-xs font-bold text-expense">{formatCurrency(selectedRow.expenses, region)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Entries</p>
+                    <p className="text-[10px] font-bold text-ink-soft uppercase tracking-wider">Entries</p>
                     <p className="text-xs font-bold text-slate-900">{selectedRow.txCount}</p>
                   </div>
                 </div>
@@ -319,7 +319,7 @@ export default function Reports() {
 
       {availableTags.length > 0 && (
         <div className="no-print flex items-center gap-2">
-          <Filter className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          <Filter className="w-4 h-4 text-ink-soft flex-shrink-0" />
           <select
             value={jobTagFilter}
             onChange={(e) => setJobTagFilter(e.target.value)}
@@ -341,10 +341,10 @@ export default function Reports() {
       )}
 
       {/* Print area */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 overflow-hidden print-area">
+      <div className="bg-white rounded-xl border border-line overflow-hidden print-area">
 
         {/* Report header */}
-        <div className="bg-brand-600 text-white p-5 print:bg-white print:text-black print:border-b print:border-slate-200">
+        <div className="bg-brand-600 text-white p-5 print:bg-white print:text-black print:border-b print:border-line">
           <div className="flex items-start justify-between">
             <div>
               <h3 className="text-xl font-bold tracking-tight">{region === 'uk' ? 'Provisional Self-Assessment Summary' : 'Provisional Income & Tax Summary'}</h3>
@@ -353,7 +353,7 @@ export default function Reports() {
                 {jobTagFilter && ` &middot; Job: ${jobTagFilter}`}
               </p>
             </div>
-            <p className="text-brand-200 print:text-slate-400 text-xs font-medium text-right">
+            <p className="text-brand-200 print:text-ink-soft text-xs font-medium text-right">
               Generated<br />{new Date().toLocaleDateString()}
             </p>
           </div>
@@ -363,19 +363,19 @@ export default function Reports() {
 
           {/* Three-KPI summary row */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 print:bg-white">
+            <div className="p-4 bg-slate-50 rounded-xl border border-line print:bg-white">
               <div className="flex items-center gap-1.5 mb-2">
-                <TrendingUp className="w-4 h-4 text-emerald-500" />
+                <TrendingUp className="w-4 h-4 text-income" />
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Gross Turnover</span>
               </div>
               <span className="text-xl font-bold text-slate-900 block">{formatCurrency(totalIncome, region)}</span>
             </div>
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 print:bg-white">
+            <div className="p-4 bg-slate-50 rounded-xl border border-line print:bg-white">
               <div className="flex items-center gap-1.5 mb-2">
                 <TrendingDown className="w-4 h-4 text-red-500" />
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Expenses</span>
               </div>
-              <span className="text-xl font-bold text-red-600 block">{formatCurrency(totalExpenses, region)}</span>
+              <span className="text-xl font-bold text-expense block">{formatCurrency(totalExpenses, region)}</span>
             </div>
             <div className={`p-4 rounded-xl border print:bg-white ${netProfit >= 0 ? 'bg-brand-50 border-brand-200' : 'bg-red-50 border-red-200'}`}>
               <div className="flex items-center gap-1.5 mb-2">
@@ -390,47 +390,47 @@ export default function Reports() {
 
           {/* Income breakdown */}
           <div>
-            <h4 className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-3 pb-2 border-b border-slate-100">
+            <h4 className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-3 pb-2 border-b border-line">
               Gross Income
             </h4>
             {Object.entries(incomeByAccount).sort().map(([account, amount]) => (
-              <div key={account} className="flex justify-between py-1.5 border-b border-slate-100 last:border-0">
+              <div key={account} className="flex justify-between py-1.5 border-b border-line last:border-0">
                 <span className="text-sm text-slate-600 pl-3 font-medium">{account.split(':').slice(1).join(' › ')}</span>
                 <span className="text-sm font-bold text-slate-900">{formatCurrency(amount, region)}</span>
               </div>
             ))}
             {Object.keys(incomeByAccount).length === 0 && (
-              <p className="text-sm text-slate-400 pl-3 py-1.5 font-medium italic">No income recorded this period.</p>
+              <p className="text-sm text-ink-soft pl-3 py-1.5 font-medium italic">No income recorded this period.</p>
             )}
-            <div className="flex justify-between pt-3 mt-2 border-t-2 border-slate-200 font-bold">
+            <div className="flex justify-between pt-3 mt-2 border-t-2 border-line font-bold">
               <span className="text-slate-900">Total Income</span>
-              <span className="text-emerald-600">{formatCurrency(totalIncome, region)}</span>
+              <span className="text-income">{formatCurrency(totalIncome, region)}</span>
             </div>
           </div>
 
           {/* Expense breakdown */}
           <div>
-            <h4 className="text-[10px] font-bold text-red-700 uppercase tracking-widest mb-3 pb-2 border-b border-slate-100">
+            <h4 className="text-[10px] font-bold text-red-700 uppercase tracking-widest mb-3 pb-2 border-b border-line">
               Expenses
             </h4>
             {Object.entries(expensesByAccount).sort().map(([account, amount]) => (
-              <div key={account} className="flex justify-between py-1.5 border-b border-slate-100 last:border-0">
+              <div key={account} className="flex justify-between py-1.5 border-b border-line last:border-0">
                 <span className="text-sm text-slate-600 pl-3 font-medium">{account.split(':').slice(1).join(' › ')}</span>
                 <span className="text-sm font-bold text-slate-900">{formatCurrency(amount, region)}</span>
               </div>
             ))}
             {Object.keys(expensesByAccount).length === 0 && (
-              <p className="text-sm text-slate-400 pl-3 py-1.5 font-medium italic">No expenses recorded this period.</p>
+              <p className="text-sm text-ink-soft pl-3 py-1.5 font-medium italic">No expenses recorded this period.</p>
             )}
-            <div className="flex justify-between pt-3 mt-2 border-t-2 border-slate-200 font-bold">
+            <div className="flex justify-between pt-3 mt-2 border-t-2 border-line font-bold">
               <span className="text-slate-900">Total Expenses</span>
-              <span className="text-red-600">{formatCurrency(totalExpenses, region)}</span>
+              <span className="text-expense">{formatCurrency(totalExpenses, region)}</span>
             </div>
           </div>
 
           {/* Notable sub-lines */}
           {(travelTotal > 0 || softwareTotal > 0) && (
-            <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 print:bg-white space-y-2">
+            <div className="bg-slate-50 rounded-xl border border-line p-4 print:bg-white space-y-2">
               <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Line-Item Notes</h4>
               {travelTotal > 0 && (
                 <div className="flex justify-between text-sm">
@@ -439,7 +439,7 @@ export default function Reports() {
                 </div>
               )}
               {softwareTotal > 0 && (
-                <div className="flex justify-between text-sm border-t border-slate-200 pt-2">
+                <div className="flex justify-between text-sm border-t border-line pt-2">
                   <span className="text-slate-600 font-medium">Software & IT</span>
                   <span className="font-bold text-slate-900">{formatCurrency(softwareTotal, region)}</span>
                 </div>
@@ -451,13 +451,13 @@ export default function Reports() {
           <div className={`rounded-xl p-4 border-2 print:bg-gray-100 print:border-gray-300 ${netProfit >= 0 ? 'bg-brand-50 border-brand-200' : 'bg-red-50 border-red-200'}`}>
             <div className="flex justify-between items-center">
               <span className="text-lg font-bold text-slate-900">Net Profit / (Loss)</span>
-              <span className={`text-xl font-bold ${netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+              <span className={`text-xl font-bold ${netProfit >= 0 ? 'text-income' : 'text-red-600'}`}>
                 {formatCurrency(netProfit, region)}
               </span>
             </div>
           </div>
 
-          <p className="text-[10px] leading-relaxed text-slate-400 font-medium text-center italic border-t border-slate-100 pt-4">
+          <p className="text-[10px] leading-relaxed text-ink-soft font-medium text-center italic border-t border-line pt-4">
             This tool is a pre-accounting organisation utility only and does not constitute certified professional tax advice.
             Data is encrypted locally via client-side browser keys and remains the user's sole financial liability.
           </p>

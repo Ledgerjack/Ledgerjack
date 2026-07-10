@@ -122,7 +122,7 @@ function VaultAnimation({ onDone }: { onDone: () => void }) {
             <div key={s}
               className={`flex items-center gap-2 transition-all duration-300 ${i <= phase ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
               <span className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${i < phase ? 'bg-brand-500' : i === phase ? 'bg-brand-500 animate-pulse' : 'bg-slate-300'}`} />
-              <span className={`text-sm font-mono ${i < phase ? 'text-brand-600' : i === phase ? 'text-brand-700' : 'text-slate-400'}`}>{s}</span>
+              <span className={`text-sm font-mono ${i < phase ? 'text-brand-600' : i === phase ? 'text-brand-700' : 'text-ink-soft'}`}>{s}</span>
             </div>
           ))}
         </div>
@@ -210,7 +210,7 @@ function CountryCombobox({ value, onChange }: { value: string; onChange: (id: st
       <button
         type="button"
         onClick={() => { setOpen((o) => !o); setTimeout(() => inputRef.current?.focus(), 50); }}
-        className="w-full flex items-center gap-3 px-4 py-3.5 bg-white border-2 border-slate-200 hover:border-brand-400 rounded-xl text-left transition-all shadow-sm"
+        className="w-full flex items-center gap-3 px-4 py-3.5 bg-white border border-line hover:border-brand-400 rounded-xl text-left transition-all shadow-sm"
       >
         <span className="text-xl leading-none">{getFlagEmoji(selected?.countryCode ?? 'XX')}</span>
         <div className="flex-1 min-w-0">
@@ -221,23 +221,23 @@ function CountryCombobox({ value, onChange }: { value: string; onChange: (id: st
             </div>
           )}
         </div>
-        <ChevronRight className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
+        <ChevronRight className={`w-4 h-4 text-ink-soft flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border-2 border-slate-200 rounded-xl shadow-xl overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-2.5 border-b border-slate-100">
-            <Search className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border border-line rounded-xl shadow-xl overflow-hidden">
+          <div className="flex items-center gap-2 px-3 py-2.5 border-b border-line">
+            <Search className="w-3.5 h-3.5 text-ink-soft flex-shrink-0" />
             <input
               ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search country or currency…"
-              className="flex-1 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 outline-none"
+              className="flex-1 bg-transparent text-sm text-slate-900 placeholder:text-ink-soft outline-none"
             />
             {query && (
-              <button onClick={() => setQuery('')} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setQuery('')} className="text-ink-soft hover:text-slate-600">
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
@@ -255,7 +255,7 @@ function CountryCombobox({ value, onChange }: { value: string; onChange: (id: st
                 <span className="text-base leading-none w-6 flex-shrink-0">{getFlagEmoji(r.countryCode)}</span>
                 <div className="flex-1 min-w-0">
                   <div className={`text-sm font-medium truncate ${r.id === value ? 'text-brand-700' : 'text-slate-800'}`}>{r.label}</div>
-                  <div className="text-[10px] text-slate-400 truncate">{r.currencySymbol} {r.currencyCode} &middot; {r.mileageUnit === 'miles' ? 'Miles' : 'KM'}</div>
+                  <div className="text-[10px] text-ink-soft truncate">{r.currencySymbol} {r.currencyCode} &middot; {r.mileageUnit === 'miles' ? 'Miles' : 'KM'}</div>
                 </div>
                 {r.id === value && <Check className="w-3.5 h-3.5 text-brand-500 flex-shrink-0" />}
               </button>
@@ -435,7 +435,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         <p className="text-center text-xs font-medium text-slate-500 mb-4 -mt-2">{APP_MOTTO}</p>
 
         {/* Card */}
-        <div className="bg-white/90 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/60 overflow-hidden">
+        <div className="bg-white/90 backdrop-blur-xl border border-line rounded-2xl shadow-xl shadow-slate-200/60 overflow-hidden">
           {/* Progress bar */}
           <div className="flex gap-1 p-4 pb-0">
             {Array.from({ length: TOTAL_STEPS }, (_, i) => (
@@ -508,12 +508,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         value={password}
                         onChange={(e) => { setPassword(e.target.value); setError(''); }}
                         placeholder="Minimum 8 characters"
-                        className="w-full px-4 py-3 pr-11 border-2 border-slate-200 focus:border-brand-400 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors bg-white"
+                        className="w-full px-4 py-3 pr-11 border border-line focus:border-brand-400 rounded-xl text-sm text-slate-900 placeholder:text-ink-soft outline-none transition-colors bg-white"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPass((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft hover:text-slate-600 transition-colors"
                       >
                         {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -528,12 +528,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         value={confirmPassword}
                         onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
                         placeholder="Repeat exactly"
-                        className="w-full px-4 py-3 pr-11 border-2 border-slate-200 focus:border-brand-400 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors bg-white"
+                        className="w-full px-4 py-3 pr-11 border border-line focus:border-brand-400 rounded-xl text-sm text-slate-900 placeholder:text-ink-soft outline-none transition-colors bg-white"
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirm((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft hover:text-slate-600 transition-colors"
                       >
                         {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -558,7 +558,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
                 <button
                   onClick={handleSkipVault}
-                  className="w-full flex items-center justify-center gap-1.5 text-slate-400 hover:text-slate-600 text-xs font-medium py-1 transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 text-ink-soft hover:text-slate-600 text-xs font-medium py-1 transition-colors"
                 >
                   <ShieldOff className="w-3.5 h-3.5" />
                   Skip encryption for now
@@ -593,7 +593,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-center text-slate-400 text-[10px] mt-4 px-4 leading-relaxed">
+        <p className="text-center text-ink-soft text-[10px] mt-4 px-4 leading-relaxed">
           LedgerJack is a pre-accounting organization utility only and does not provide certified professional tax advice.
           Data is encrypted locally and is the user's sole responsibility.
         </p>

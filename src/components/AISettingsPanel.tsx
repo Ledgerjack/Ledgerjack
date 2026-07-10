@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { Key, Zap, Cpu } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { modelsForRole, getSelectedModel, setSelectedModel } from '../lib/ai/aiModels';
 
 export default function AISettingsPanel() {
-  const { apiKey, setApiKey, aiModel, setAiModel } = useApp();
+  const { apiKey, setApiKey } = useApp();
 
   const [apiInput, setApiInput] = useState(apiKey);
   const [saved, setSaved]       = useState(false);
+  const [scanModel, setScanModel] = useState(getSelectedModel('scanning'));
+  const [insightModel, setInsightModel] = useState(getSelectedModel('insights'));
 
   const handleSaveApiKey = () => {
     setApiKey(apiInput.trim());
@@ -20,14 +23,14 @@ export default function AISettingsPanel() {
   };
 
   return (
-    <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-3">
+    <div className="bg-white rounded-xl border border-line p-4 space-y-3">
       <div className="flex items-center gap-2">
         <Zap className="w-5 h-5 text-brand-600" />
         <h3 className="font-bold text-slate-900">AI (OpenRouter key)</h3>
       </div>
 
       <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+        <label className="text-[10px] font-bold uppercase tracking-wider text-ink-soft">
           OpenRouter API Key
         </label>
         <input
@@ -48,13 +51,13 @@ export default function AISettingsPanel() {
           {apiKey && (
             <button
               onClick={handleClearApiKey}
-              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold transition-colors"
+              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-line text-slate-600 rounded-lg text-xs font-semibold transition-colors"
             >
               Clear
             </button>
           )}
         </div>
-        <p className="text-[10px] text-slate-400 leading-relaxed">
+        <p className="text-[10px] text-ink-soft leading-relaxed">
           One OpenRouter key powers all AI: OpenAI models for scanning and entries,
           Anthropic (Opus 4.8 / Fable 5) for insights. Your key is stored in your
           encrypted vault, never sent to any LedgerJack server. Your figures pass
@@ -62,50 +65,40 @@ export default function AISettingsPanel() {
           OpenRouter account. Get a key at openrouter.ai.
         </p>
 
-        {/* Model selector */}
-        <div className="pt-2 border-t border-slate-100 space-y-2">
+        {/* Two model pickers: one for scanning, one for insights */}
+        <div className="pt-2 border-t border-line space-y-3">
           <div className="flex items-center gap-1.5">
-            <Cpu className="w-3.5 h-3.5 text-slate-400" />
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Model Routing
-            </p>
+            <Cpu className="w-3.5 h-3.5 text-ink-soft" />
+            <p className="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Choose your models</p>
           </div>
-          <div className="flex p-0.5 bg-slate-100 rounded-lg border border-slate-200">
-            <button
-              onClick={() => setAiModel('smart')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors ${
-                aiModel === 'smart'
-                  ? 'bg-white shadow-sm text-slate-900 border border-slate-200'
-                  : 'text-slate-500 hover:text-slate-700'
-              }`}
+
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-ink">Scanning receipts &amp; entries</label>
+            <select
+              value={scanModel}
+              onChange={(e) => { setSelectedModel('scanning', e.target.value); setScanModel(e.target.value); }}
+              className="w-full px-3 py-2 border border-line rounded-lg text-sm bg-white text-ink"
             >
-              Smart Routing
-            </button>
-            <button
-              onClick={() => setAiModel('economy')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors ${
-                aiModel === 'economy'
-                  ? 'bg-white shadow-sm text-slate-900 border border-slate-200'
-                  : 'text-slate-500 hover:text-slate-700'
-              }`}
-            >
-              Economy
-            </button>
-            <button
-              onClick={() => setAiModel('quality')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors ${
-                aiModel === 'quality'
-                  ? 'bg-white shadow-sm text-slate-900 border border-slate-200'
-                  : 'text-slate-500 hover:text-slate-700'
-              }`}
-            >
-              Quality
-            </button>
+              {modelsForRole('scanning').map((m) => (
+                <option key={m.id} value={m.id}>{m.label}{m.recommended ? ' (recommended)' : ''}</option>
+              ))}
+            </select>
           </div>
-          <p className="text-[10px] text-slate-400 leading-relaxed">
-            {aiModel === 'smart'   && 'Auto: gpt-4o-mini for text, gpt-4o for images & complex receipts. Cuts costs ~80%.'}
-            {aiModel === 'economy' && 'Always gpt-4o-mini. Lowest cost. Best for simple text entries.'}
-            {aiModel === 'quality' && 'Always gpt-4o. Highest accuracy for handwritten or complex invoices.'}
+
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-ink">Insights &amp; explanations</label>
+            <select
+              value={insightModel}
+              onChange={(e) => { setSelectedModel('insights', e.target.value); setInsightModel(e.target.value); }}
+              className="w-full px-3 py-2 border border-line rounded-lg text-sm bg-white text-ink"
+            >
+              {modelsForRole('insights').map((m) => (
+                <option key={m.id} value={m.id}>{m.label}{m.recommended ? ' (recommended)' : ''}</option>
+              ))}
+            </select>
+          </div>
+          <p className="text-[10px] text-ink-soft leading-relaxed">
+            Pick which model handles each job. Cheaper models cost less; premium models are more accurate on tricky receipts or deeper insights.
           </p>
         </div>
       </div>

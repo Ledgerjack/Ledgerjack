@@ -25,8 +25,8 @@ export default function TaxPotCard({ onNavigate }: { onNavigate: (view: string) 
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4">
-        <p className="text-sm text-slate-400">Working out your tax position…</p>
+      <div className="bg-white rounded-xl border border-line p-4">
+        <p className="text-sm text-ink-soft">Working out your tax position…</p>
       </div>
     );
   }
@@ -55,12 +55,12 @@ export default function TaxPotCard({ onNavigate }: { onNavigate: (view: string) 
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-100">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Profit so far</p>
+        <div className="bg-slate-50 rounded-lg p-2.5 border border-line">
+          <p className="text-[10px] font-bold text-ink-soft uppercase tracking-wider">Profit so far</p>
           <p className="text-sm font-bold text-slate-900 mt-0.5">{formatCurrency(pence(pot.ytdProfit), "uk")}</p>
         </div>
-        <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-100">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Income Tax + NI</p>
+        <div className="bg-slate-50 rounded-lg p-2.5 border border-line">
+          <p className="text-[10px] font-bold text-ink-soft uppercase tracking-wider">Income Tax + NI</p>
           <p className="text-sm font-bold text-slate-900 mt-0.5">
             {formatCurrency(pence(pot.estimate.incomeTax), "uk")} + {formatCurrency(pence(pot.estimate.class4NI), "uk")}
           </p>
@@ -74,7 +74,7 @@ export default function TaxPotCard({ onNavigate }: { onNavigate: (view: string) 
         </p>
       </div>
 
-      <p className="text-[10px] text-slate-400 flex items-start gap-1">
+      <p className="text-[10px] text-ink-soft flex items-start gap-1">
         <Info className="w-3 h-3 mt-0.5 shrink-0" />
         Estimate for England, Wales &amp; NI to help you plan — not tax advice or HMRC's official figure. Scottish rates differ.
       </p>

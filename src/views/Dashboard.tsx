@@ -9,6 +9,7 @@ import BackupReminder from '../components/BackupReminder';
 import TaxPotCard from '../components/TaxPotCard';
 import QuickEntry from '../components/QuickEntry';
 import ThisMonthCard from '../components/ThisMonthCard';
+import BudgetHomeCard from '../components/BudgetHomeCard';
 
 interface DashboardProps {
   onNavigate: (view: string) => void;
@@ -85,7 +86,7 @@ function RunwayGauge({ runway }: { runway: RunwayData }) {
       : 'bg-red-500';
 
   return (
-    <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-3">
+    <div className="bg-white rounded-xl border border-line p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Flame className="w-5 h-5 text-orange-500" />
@@ -112,27 +113,27 @@ function RunwayGauge({ runway }: { runway: RunwayData }) {
             style={{ width: `${gaugePercent}%` }}
           />
         </div>
-        <p className="text-[10px] text-slate-400 font-medium">Based on current cash balance ÷ avg monthly expenses</p>
+        <p className="text-[10px] text-ink-soft font-medium">Based on current cash balance ÷ avg monthly expenses</p>
       </div>
 
       {/* Metrics */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-100">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Avg Burn</p>
+        <div className="bg-slate-50 rounded-lg p-2.5 border border-line">
+          <p className="text-[10px] font-bold text-ink-soft uppercase tracking-wider">Avg Burn</p>
           <p className="text-sm font-bold text-red-600 mt-0.5">{formatCurrency(avgMonthlyBurn, region)}</p>
-          <p className="text-[9px] text-slate-400">/ month</p>
+          <p className="text-[9px] text-ink-soft">/ month</p>
         </div>
-        <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-100">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Avg Revenue</p>
-          <p className="text-sm font-bold text-emerald-600 mt-0.5">{formatCurrency(avgMonthlyIncome, region)}</p>
-          <p className="text-[9px] text-slate-400">/ month</p>
+        <div className="bg-slate-50 rounded-lg p-2.5 border border-line">
+          <p className="text-[10px] font-bold text-ink-soft uppercase tracking-wider">Avg Revenue</p>
+          <p className="text-sm font-bold text-income mt-0.5">{formatCurrency(avgMonthlyIncome, region)}</p>
+          <p className="text-[9px] text-ink-soft">/ month</p>
         </div>
-        <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-100">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Net Cash</p>
+        <div className="bg-slate-50 rounded-lg p-2.5 border border-line">
+          <p className="text-[10px] font-bold text-ink-soft uppercase tracking-wider">Net Cash</p>
           <p className={`text-sm font-bold mt-0.5 ${cashBalance >= 0 ? 'text-slate-900' : 'text-red-600'}`}>
             {formatCurrency(Math.abs(cashBalance), region)}
           </p>
-          <p className="text-[9px] text-slate-400">{cashBalance >= 0 ? 'surplus' : 'deficit'}</p>
+          <p className="text-[9px] text-ink-soft">{cashBalance >= 0 ? 'surplus' : 'deficit'}</p>
         </div>
       </div>
     </div>
@@ -198,12 +199,13 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
       <QuickEntry />
       <ThisMonthCard />
+      <BudgetHomeCard onNavigate={onNavigate} />
 
       {region === 'uk' && <TaxPotCard onNavigate={onNavigate} />}
 
       <button
         onClick={() => onNavigate('bulk-receipts')}
-        className="w-full bg-white rounded-xl border-2 border-slate-200 p-4 flex items-center justify-between text-left"
+        className="w-full bg-white rounded-xl border border-line p-4 flex items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-brand-600" />
@@ -212,7 +214,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             <p className="text-xs text-slate-500">Upload several receipt photos to scan at once</p>
           </div>
         </div>
-        <span className="text-slate-400 text-xl leading-none">›</span>
+        <span className="text-ink-soft text-xl leading-none">›</span>
       </button>
 
       <button
@@ -226,7 +228,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             <p className="text-xs text-slate-500">Create and send invoices, save as PDF</p>
           </div>
         </div>
-        <span className="text-slate-400 text-xl leading-none">›</span>
+        <span className="text-ink-soft text-xl leading-none">›</span>
       </button>
 
       <button
@@ -240,7 +242,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             <p className="text-xs text-slate-500">Understand your numbers in plain English</p>
           </div>
         </div>
-        <span className="text-slate-400 text-xl leading-none">›</span>
+        <span className="text-ink-soft text-xl leading-none">›</span>
       </button>
 
       <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-2xl p-5 text-white shadow-lg">
@@ -308,7 +310,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           </button>
         </div>
         {recentTxns.length === 0 ? (
-          <div className="bg-white rounded-xl border-2 border-slate-200 p-6 text-center">
+          <div className="bg-white rounded-xl border border-line p-6 text-center">
             <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
             <p className="text-slate-500 font-medium">No transactions yet</p>
             <button
@@ -326,11 +328,11 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
               return (
                 <div
                   key={tx.id}
-                  className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-center gap-3 hover:border-slate-300 transition-colors"
+                  className="bg-white rounded-xl border border-line p-3 flex items-center gap-3 hover:border-slate-300 transition-colors"
                 >
                   <div
                     className={`w-9 h-9 rounded-lg flex items-center justify-center border ${
-                      isExpense ? 'bg-red-50 border-red-200 text-red-600' : 'bg-emerald-50 border-emerald-200 text-emerald-600'
+                      isExpense ? 'bg-red-50 border-red-200 text-red-600' : 'bg-emerald-50 border-emerald-200 text-income'
                     }`}
                   >
                     {isExpense ? (
@@ -341,13 +343,13 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-900 truncate">{tx.description}</p>
-                    <p className="text-xs text-slate-400 font-medium">
+                    <p className="text-xs text-ink-soft font-medium">
                       {tx.date} &middot; {debitSplit?.account_id || ''}
                     </p>
                   </div>
                   <span
                     className={`text-sm font-bold ${
-                      isExpense ? 'text-red-600' : 'text-emerald-600'
+                      isExpense ? 'text-red-600' : 'text-income'
                     }`}
                   >
                     {isExpense ? '-' : '+'}{formatCurrency(debitSplit?.amount || 0, region)}

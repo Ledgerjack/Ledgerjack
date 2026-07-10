@@ -100,10 +100,10 @@ export default function AccountantView({ onBack }: { onBack: () => void }) {
       </p>
 
       {/* Flagged items + share */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Flagged to discuss ({flagged.length})</p>
         {flagged.length === 0 ? (
-          <p className="text-xs text-slate-400">Nothing flagged yet. Use the list below.</p>
+          <p className="text-xs text-ink-soft">Nothing flagged yet. Use the list below.</p>
         ) : (
           <div className="space-y-1">
             {flagged.map((it) => (
@@ -116,19 +116,19 @@ export default function AccountantView({ onBack }: { onBack: () => void }) {
         )}
         <div className="flex flex-wrap gap-2 pt-1">
           <button onClick={() => shareNote("email")} className="flex items-center gap-1 text-xs font-semibold text-brand-600"><Send className="w-3.5 h-3.5" /> Email note</button>
-          <button onClick={() => shareNote("whatsapp")} className="flex items-center gap-1 text-xs font-semibold text-emerald-600"><MessageCircle className="w-3.5 h-3.5" /> WhatsApp</button>
+          <button onClick={() => shareNote("whatsapp")} className="flex items-center gap-1 text-xs font-semibold text-income"><MessageCircle className="w-3.5 h-3.5" /> WhatsApp</button>
           <button onClick={() => shareNote("telegram")} className="flex items-center gap-1 text-xs font-semibold text-sky-600"><Send className="w-3.5 h-3.5" /> Telegram</button>
         </div>
         <button onClick={downloadPack} className="w-full mt-1 flex items-center justify-center gap-1.5 bg-brand-600 text-white py-2 rounded-lg text-sm font-bold">
           <Download className="w-4 h-4" /> Download accountant pack
         </button>
-        <p className="text-[10px] text-slate-400">Tax year {fy.from} to {fy.to} · SA103 boxes + provisional statements + full transactions (CSV). Provisional — for your accountant to review.</p>
+        <p className="text-[10px] text-ink-soft">Tax year {fy.from} to {fy.to} · SA103 boxes + provisional statements + full transactions (CSV). Provisional — for your accountant to review.</p>
         {packMsg && <p className="text-[11px] text-slate-500">{packMsg}</p>}
       </div>
 
       {/* Live share link — coming soon */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-start gap-2">
-        <Users className="w-4 h-4 text-slate-400 mt-0.5" />
+      <div className="bg-white rounded-xl border border-line p-3 flex items-start gap-2">
+        <Users className="w-4 h-4 text-ink-soft mt-0.5" />
         <div>
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold text-slate-900">Give your accountant a live read-only link</span>
@@ -139,10 +139,10 @@ export default function AccountantView({ onBack }: { onBack: () => void }) {
       </div>
 
       {/* Browse to flag */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-3 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-3 space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Flag a transaction</p>
         <div className="flex items-center gap-2 border-2 border-slate-300 rounded-lg px-2">
-          <Search className="w-4 h-4 text-slate-400" />
+          <Search className="w-4 h-4 text-ink-soft" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search descriptions" className="flex-1 py-2 text-sm outline-none" />
         </div>
         <div className="space-y-1 max-h-80 overflow-auto">

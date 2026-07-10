@@ -36,7 +36,7 @@ export default function ClientBook({ onBack }: { onBack: () => void }) {
         <h2 className="text-lg font-bold text-slate-900">Clients</h2>
       </div>
 
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">New client</p>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
         <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)" className="w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
@@ -46,16 +46,16 @@ export default function ClientBook({ onBack }: { onBack: () => void }) {
       </div>
 
       {clients.length === 0 ? (
-        <p className="text-sm text-slate-400 text-center">No clients yet.</p>
+        <p className="text-sm text-ink-soft text-center">No clients yet.</p>
       ) : (
         <div className="space-y-2">
           {clients.map((c) => (
-            <div key={c.id} className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-center gap-2">
+            <div key={c.id} className="bg-white rounded-xl border border-line p-3 flex items-center gap-2">
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
-                {c.email && <p className="text-[11px] text-slate-400 truncate">{c.email}</p>}
+                {c.email && <p className="text-[11px] text-ink-soft truncate">{c.email}</p>}
               </div>
-              <button onClick={() => remove(c.id)} className="text-slate-400 hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
+              <button onClick={() => remove(c.id)} className="text-ink-soft hover:text-red-500 shrink-0" aria-label="Delete"><Trash2 className="w-4 h-4" /></button>
             </div>
           ))}
         </div>

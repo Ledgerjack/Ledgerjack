@@ -12,6 +12,7 @@ export interface AIParserRequest {
   region: TaxRegion;
   /** When true, use gpt-4o for complex/image requests; otherwise gpt-4o-mini */
   useHighQualityModel?: boolean;
+  modelId?: string;
 }
 
 export interface LineItem {
@@ -108,6 +109,9 @@ function getRegionPrompt(region: TaxRegion): string {
  * - Everything else → gpt-4o-mini (fast, cheap)
  */
 function selectModel(request: AIParserRequest): string {
+  // An explicit user-chosen scanning model wins (all listed scanning models
+  // support vision, so it's safe even with an image).
+  if (request.modelId) return request.modelId;
   if (request.imageData) return 'openai/gpt-4o';
   if (request.useHighQualityModel) return 'openai/gpt-4o';
   return 'openai/gpt-4o-mini';

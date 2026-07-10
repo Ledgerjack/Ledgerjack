@@ -17,7 +17,7 @@ export default function TipJar() {
   const configured = url.trim() !== '';
 
   return (
-    <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-3">
+    <div className="bg-white rounded-xl border border-line p-4 space-y-3">
       <div className="flex items-center gap-2">
         <Heart className="w-5 h-5 text-brand-600" />
         <h3 className="font-bold text-slate-900">Support LedgerJack</h3>
@@ -30,11 +30,11 @@ export default function TipJar() {
       </p>
 
       {/* One-off / recurring toggle */}
-      <div className="flex p-0.5 bg-slate-100 rounded-lg border border-slate-200">
+      <div className="flex p-0.5 bg-slate-100 rounded-lg border border-line">
         <button
           onClick={() => setMode('oneOff')}
           className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors ${
-            mode === 'oneOff' ? 'bg-white shadow-sm text-slate-900 border border-slate-200' : 'text-slate-500'
+            mode === 'oneOff' ? 'bg-white shadow-sm text-slate-900 border border-line' : 'text-slate-500'
           }`}
         >
           One-off
@@ -42,14 +42,14 @@ export default function TipJar() {
         <button
           onClick={() => setMode('recurring')}
           className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors ${
-            mode === 'recurring' ? 'bg-white shadow-sm text-slate-900 border border-slate-200' : 'text-slate-500'
+            mode === 'recurring' ? 'bg-white shadow-sm text-slate-900 border border-line' : 'text-slate-500'
           }`}
         >
           Monthly
         </button>
       </div>
 
-      <p className="text-[11px] text-slate-400 text-center">
+      <p className="text-[11px] text-ink-soft text-center">
         Choose any amount you like — many people give {suggestion}.
       </p>
 
@@ -64,14 +64,14 @@ export default function TipJar() {
         </a>
       ) : (
         <div className="text-center py-2 px-3 bg-slate-50 border border-dashed border-slate-300 rounded-lg">
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-ink-soft">
             Contribution link not set yet. Add your payment link in
             <span className="font-mono"> src/lib/supportConfig.ts</span>.
           </p>
         </div>
       )}
 
-      <p className="text-[10px] text-slate-400 text-center">
+      <p className="text-[10px] text-ink-soft text-center">
         Contributions go towards hosting, the domain, and paying developers to fix bugs and add features.
       </p>
 
@@ -80,7 +80,7 @@ export default function TipJar() {
           href={SUPPORT_LINKS.github}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-1.5 w-full py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-900 rounded-lg text-xs font-semibold transition-colors"
+          className="flex items-center justify-center gap-1.5 w-full py-2 bg-slate-100 hover:bg-slate-200 border border-line text-slate-600 hover:text-slate-900 rounded-lg text-xs font-semibold transition-colors"
         >
           <ExternalLink className="w-3.5 h-3.5" /> View source on GitHub
         </a>

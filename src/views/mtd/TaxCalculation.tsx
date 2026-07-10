@@ -57,10 +57,10 @@ export default function TaxCalculation({ taxYear, onBack }: { taxYear: string; o
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {calc && (
-        <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+        <div className="bg-white rounded-xl border border-line p-4 space-y-2">
           <p className="text-sm text-slate-500">Estimated income tax &amp; NICs due</p>
           <p className="text-2xl font-bold text-slate-900">{gbp(income)}</p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-ink-soft">
             This is HMRC's estimate for the year so far and may change. The amount and
             payment dates in your HMRC online account are the authoritative figures.
           </p>

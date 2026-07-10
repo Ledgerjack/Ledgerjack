@@ -55,11 +55,11 @@ export default function Statements({ onBack }: { onBack: () => void }) {
         </p>
       </div>
 
-      {!st && <p className="text-sm text-slate-400">Preparing your figures…</p>}
+      {!st && <p className="text-sm text-ink-soft">Preparing your figures…</p>}
 
       {st && (
         <>
-          <p className="text-xs text-slate-400">Period: {st.from} to {st.to}</p>
+          <p className="text-xs text-ink-soft">Period: {st.from} to {st.to}</p>
 
           {/* P&L */}
           <Section title="Profit & Loss">
@@ -69,7 +69,7 @@ export default function Statements({ onBack }: { onBack: () => void }) {
             <SubHead>Expenses</SubHead>
             {st.pnl.expenses.map((e) => <Line key={e.name} label={e.name} value={m(e.amount)} />)}
             <Line label="Total expenses" value={m(st.pnl.totalExpenses)} strong />
-            <div className="border-t border-slate-200 mt-1 pt-1">
+            <div className="border-t border-line mt-1 pt-1">
               <Line label="Net profit" value={m(st.pnl.netProfit)} strong />
             </div>
           </Section>
@@ -101,7 +101,7 @@ export default function Statements({ onBack }: { onBack: () => void }) {
               {sa.otherIncome > 0 && <Line label="Other business income" value={m(sa.otherIncome)} />}
               {sa.expenses.map((e) => <Line key={e.key} label={e.label} value={m(e.amount)} />)}
               <Line label="Total expenses" value={m(sa.totalExpenses)} strong />
-              <div className="border-t border-slate-200 mt-1 pt-1">
+              <div className="border-t border-line mt-1 pt-1">
                 <Line label="Net profit" value={m(sa.netProfit)} strong />
               </div>
             </Section>
@@ -121,10 +121,10 @@ export default function Statements({ onBack }: { onBack: () => void }) {
             >
               <Download className="w-4 h-4" /> Download transactions (CSV)
             </button>
-            <p className="text-[10px] text-slate-400 text-center">CSV files open in Excel or Google Sheets. Every file is labelled provisional.</p>
+            <p className="text-[10px] text-ink-soft text-center">CSV files open in Excel or Google Sheets. Every file is labelled provisional.</p>
           </div>
 
-          <p className="text-[11px] text-slate-400 text-center">
+          <p className="text-[11px] text-ink-soft text-center">
             Provisional figures for discussion with a qualified accountant — keeping a professional in the loop is standard practice.
           </p>
         </>
@@ -135,14 +135,14 @@ export default function Statements({ onBack }: { onBack: () => void }) {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-1">
+    <div className="bg-white rounded-xl border border-line p-4 space-y-1">
       <h3 className="font-bold text-slate-900 text-sm mb-1">{title}</h3>
       {children}
     </div>
   );
 }
 function SubHead({ children }: { children: React.ReactNode }) {
-  return <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 pt-1">{children}</p>;
+  return <p className="text-[10px] font-bold uppercase tracking-wider text-ink-soft pt-1">{children}</p>;
 }
 function Line({ label, value, strong, warn }: { label: string; value: string; strong?: boolean; warn?: boolean }) {
   return (

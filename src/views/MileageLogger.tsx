@@ -139,7 +139,7 @@ export default function MileageLogger() {
 
       <h2 className="text-lg font-bold text-slate-900">Mileage Logger</h2>
 
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-3">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-semibold text-slate-800 mb-1">Date</label>
@@ -172,7 +172,7 @@ export default function MileageLogger() {
                     <Square className="w-4 h-4" /> Stop trip · {distance || '0.00'} {cfg.mileageUnit}
                   </button>
                 )}
-                <p className="text-[10px] text-slate-400 mt-1">Keep the app open and your screen on while driving — background tracking isn't reliable on phones. Distance is an estimate; check it before saving.</p>
+                <p className="text-[10px] text-ink-soft mt-1">Keep the app open and your screen on while driving — background tracking isn't reliable on phones. Distance is an estimate; check it before saving.</p>
               </div>
             )}
           </div>
@@ -240,13 +240,13 @@ export default function MileageLogger() {
           </div>
           <div className="space-y-2">
             {logs.map((log) => (
-              <div key={log.id} className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-center gap-3">
+              <div key={log.id} className="bg-white rounded-xl border border-line p-3 flex items-center gap-3">
                 <div className="w-9 h-9 bg-brand-50 border border-brand-200 rounded-lg flex items-center justify-center text-brand-600">
                   <Car className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-900 truncate">{log.description}</p>
-                  <p className="text-xs text-slate-400 font-medium">
+                  <p className="text-xs text-ink-soft font-medium">
                     {log.date} &middot; {log.distance} {cfg.mileageUnit} @ {cfg.currencySymbol}{log.rate_applied}/{cfg.mileageUnit}
                   </p>
                 </div>
@@ -255,7 +255,7 @@ export default function MileageLogger() {
                 </span>
                 <button
                   onClick={() => handleDelete(log.id)}
-                  className="text-slate-400 hover:text-red-500 transition-colors"
+                  className="text-ink-soft hover:text-red-500 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

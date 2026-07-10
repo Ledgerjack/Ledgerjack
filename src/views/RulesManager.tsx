@@ -72,7 +72,7 @@ export default function RulesManager({ onBack }: { onBack: () => void }) {
       </p>
 
       {/* Add a rule */}
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-4 space-y-2">
+      <div className="bg-white rounded-xl border border-line p-4 space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">New rule</p>
         <div className="flex gap-2">
           <select
@@ -116,7 +116,7 @@ export default function RulesManager({ onBack }: { onBack: () => void }) {
           {suggestions.map((s) => (
             <div key={s.pattern} className="flex items-center gap-2">
               <span className="text-sm text-slate-700 flex-1 min-w-0 truncate">
-                "{s.pattern}" → {nameFor(s.accountId)} <span className="text-slate-400">({s.count}×)</span>
+                "{s.pattern}" → {nameFor(s.accountId)} <span className="text-ink-soft">({s.count}×)</span>
               </span>
               <button onClick={() => addSuggestion(s)} className="text-xs font-bold text-brand-600 shrink-0">Add</button>
             </div>
@@ -126,18 +126,18 @@ export default function RulesManager({ onBack }: { onBack: () => void }) {
 
       {/* Existing rules */}
       {rules.length === 0 ? (
-        <p className="text-sm text-slate-400 text-center">No rules yet.</p>
+        <p className="text-sm text-ink-soft text-center">No rules yet.</p>
       ) : (
         <div className="space-y-2">
           {rules.map((r) => (
-            <div key={r.id} className="bg-white rounded-xl border-2 border-slate-200 p-3 flex items-center gap-2">
+            <div key={r.id} className="bg-white rounded-xl border border-line p-3 flex items-center gap-2">
               <label className="flex items-center gap-2 flex-1 min-w-0">
                 <input type="checkbox" checked={r.enabled} onChange={() => toggle(r.id)} />
                 <span className="text-sm text-slate-700 truncate">
                   If description {matchWord(r.matchType)} <span className="font-semibold">"{r.pattern}"</span> → {nameFor(r.accountId)}
                 </span>
               </label>
-              <button onClick={() => remove(r.id)} className="text-slate-400 hover:text-red-500 shrink-0" aria-label="Delete">
+              <button onClick={() => remove(r.id)} className="text-ink-soft hover:text-red-500 shrink-0" aria-label="Delete">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>

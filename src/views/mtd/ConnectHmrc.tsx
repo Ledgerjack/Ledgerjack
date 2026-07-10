@@ -43,7 +43,7 @@ export default function ConnectHmrc() {
   }
 
   if (connected === null) {
-    return <p className="text-sm text-slate-400">Checking HMRC connection…</p>;
+    return <p className="text-sm text-ink-soft">Checking HMRC connection…</p>;
   }
 
   return (
@@ -51,7 +51,7 @@ export default function ConnectHmrc() {
       <h3 className="font-semibold">Making Tax Digital</h3>
       {connected ? (
         <>
-          <p className="text-sm text-emerald-600">Connected to HMRC ✓</p>
+          <p className="text-sm text-income">Connected to HMRC ✓</p>
           <button
             onClick={disconnect}
             className="text-sm text-slate-500 underline"
