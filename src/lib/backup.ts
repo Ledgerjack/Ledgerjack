@@ -81,6 +81,7 @@ function validateSplit(raw: unknown, idx: number): DBSplit {
     transaction_id: assertString(r.transaction_id, `splits[${idx}].transaction_id`),
     account_id:     assertString(r.account_id,     `splits[${idx}].account_id`),
     amount:         assertNumber(r.amount,         `splits[${idx}].amount`),
+    amount_enc:     r.amount_enc != null ? assertString(r.amount_enc, `splits[${idx}].amount_enc`) : undefined,
     memo:           r.memo != null ? assertString(r.memo, `splits[${idx}].memo`) : null,
   };
 }

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { db, loadWithSplits, type DBTransaction, type DBSplit, type TransactionWithSplits } from './db';
+import { encField, encAmount } from './atRest';
 
 export type { DBTransaction, DBSplit, TransactionWithSplits };
 
@@ -55,11 +56,21 @@ export async function commitBalancedTransaction(
   }
 
   await db.transaction('rw', [db.transactions, db.splits], async () => {
-    await db.transactions.put(tx);
+    // Encrypt sensitive fields at rest. validateBalance already ran on the
+    // plaintext amounts above, so encryption here doesn't affect integrity.
+    const txAtRest: DBTransaction = { ...tx, description: await encField(tx.description) };
+    await db.transactions.put(txAtRest);
     await db.splits.where('transaction_id').equals(tx.id).delete();
-    await db.splits.bulkPut(
-      splits.map((s) => ({ ...s, id: uuidv4(), transaction_id: tx.id })),
+    const encSplits = await Promise.all(
+      splits.map(async (s) => ({
+        ...s,
+        id: uuidv4(),
+        transaction_id: tx.id,
+        amount: 0,                       // plaintext amount zeroed on disk
+        amount_enc: await encAmount(s.amount),
+      })),
     );
+    await db.splits.bulkPut(encSplits);
   });
 }
 
@@ -94,7 +105,9 @@ export async function updateTransaction(
   if (splits !== undefined) {
     await commitBalancedTransaction(updated, splits);
   } else {
-    await db.transactions.put(updated);
+    // encField is idempotent — an unchanged (already-encrypted) description is
+    // left as-is; a newly-edited plaintext description gets encrypted.
+    await db.transactions.put({ ...updated, description: await encField(updated.description) });
   }
 }
 

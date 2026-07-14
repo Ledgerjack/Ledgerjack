@@ -15,6 +15,7 @@ import { getLastBackupTimestamp, readFileAsText, downloadFile } from "../lib/bac
 import { nativeShareFile } from "../lib/share/share";
 import { Mail } from "lucide-react";
 import RecoveryKeyBackup from "../components/RecoveryKeyBackup";
+import EncryptAtRestCard from "../components/EncryptAtRestCard";
 
 export default function CloudBackup({ onBack }: { onBack: () => void }) {
   const { updateBackupTimestamp } = useApp();
@@ -200,6 +201,9 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
 
       {/* Recovery key backup — device + email */}
       <RecoveryKeyBackup />
+
+      {/* Encrypt existing records at rest */}
+      <EncryptAtRestCard />
 
       {/* Restore */}
       <div className="bg-white rounded-xl border border-line p-3 space-y-2">

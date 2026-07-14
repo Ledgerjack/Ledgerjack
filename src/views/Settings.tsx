@@ -12,6 +12,7 @@ import { useCrypto } from '../contexts/CryptoContext';
 import { TAX_REGIONS, getFlagEmoji, type TaxRegion } from '../lib/regions';
 import { exportBackup, importBackup, downloadFile, readFileAsText } from '../lib/backup';
 import { parseCSV, csvRowToPendingTransaction, type CSVRow } from '../lib/csv';
+import { decField } from '../lib/atRest';
 import { createTransaction } from '../lib/ledger';
 import { loadRules } from '../lib/rules/rules';
 import { db } from '../lib/db';
@@ -25,7 +26,11 @@ interface DedupRow {
 }
 
 async function detectDuplicates(rows: CSVRow[], region: string): Promise<DedupRow[]> {
-  const existingTxns = await db.transactions.toArray();
+  const rawTxns = await db.transactions.toArray();
+  // Descriptions are encrypted at rest — decrypt before comparing.
+  const existingTxns = await Promise.all(
+    rawTxns.map(async (tx) => ({ ...tx, description: await decField(tx.description) })),
+  );
   const existingKeys = new Set(
     existingTxns.map((tx) => `${tx.date}|${tx.description.toLowerCase().trim()}`)
   );

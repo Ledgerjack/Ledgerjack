@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
+import { decField, decAmount } from './atRest';
 
 // ── Account ───────────────────────────────────────────────────────────────────
 
@@ -51,6 +52,8 @@ export interface DBSplit {
   account_id: string;
   /** Signed integer cents — debit > 0, credit < 0 */
   amount: number;
+  /** At-rest encrypted amount (marker string). When present, `amount` is 0 on disk. */
+  amount_enc?: string;
   memo: string | null;
 }
 
@@ -221,7 +224,18 @@ export async function loadWithSplits(txns: DBTransaction[]): Promise<Transaction
     arr.push(s);
     byTxn.set(s.transaction_id, arr);
   }
-  return txns.map((t) => ({ ...t, splits: byTxn.get(t.id) ?? [] }));
+  // Decrypt at-rest fields (description + split amounts). Legacy plaintext rows
+  // pass through unchanged, so existing data keeps working.
+  return Promise.all(txns.map(async (t) => ({
+    ...t,
+    description: await decField(t.description),
+    splits: await Promise.all(
+      (byTxn.get(t.id) ?? []).map(async (s) => ({
+        ...s,
+        amount: s.amount_enc ? await decAmount(s.amount_enc, s.amount) : s.amount,
+      })),
+    ),
+  })));
 }
 
 /** Requests durable storage allocation from the browser and opens the DB */

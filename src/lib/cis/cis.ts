@@ -11,6 +11,7 @@
  */
 
 import { db } from "../db";
+import { decAmount } from "../atRest";
 import { createTransaction } from "../ledger";
 
 export type CisStatus = "registered" | "unregistered" | "gross";
@@ -101,7 +102,10 @@ export async function cisDeductedInPeriod(from: string, to: string): Promise<num
   let total = 0;
   for (const s of splits) {
     const d = dateById.get(s.transaction_id);
-    if (d && d >= from && d <= to) total += -s.amount; // credits are negative
+    if (d && d >= from && d <= to) {
+      const amt = s.amount_enc ? await decAmount(s.amount_enc, s.amount) : s.amount;
+      total += -amt; // credits are negative
+    }
   }
   return total;
 }
