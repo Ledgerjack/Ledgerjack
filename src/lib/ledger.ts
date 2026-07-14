@@ -138,7 +138,10 @@ export async function lockTransaction(id: string): Promise<void> {
 }
 
 export async function getApprovedTransactions(): Promise<TransactionWithSplits[]> {
-  const txns = await db.transactions.where('pending_review').equals(0).toArray();
+  // pending_review is a boolean, and IndexedDB cannot index booleans, so a
+  // `.where('pending_review').equals(0)` index query returns nothing. Filter in
+  // JS instead (matches getPendingTransactions and the dashboard).
+  const txns = await db.transactions.filter((tx) => !tx.pending_review).toArray();
   return loadWithSplits(txns);
 }
 
