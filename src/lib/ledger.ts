@@ -55,21 +55,24 @@ export async function commitBalancedTransaction(
     );
   }
 
+  // Encrypt sensitive fields BEFORE opening the Dexie transaction. WebCrypto is
+  // async and foreign to Dexie — awaiting it inside db.transaction() would make
+  // the transaction inactive and cause the write to fail. validateBalance ran on
+  // the plaintext amounts above, so encrypting now doesn't affect integrity.
+  const txAtRest: DBTransaction = { ...tx, description: await encField(tx.description) };
+  const encSplits = await Promise.all(
+    splits.map(async (s) => ({
+      ...s,
+      id: uuidv4(),
+      transaction_id: tx.id,
+      amount: 0,                       // plaintext amount zeroed on disk
+      amount_enc: await encAmount(s.amount),
+    })),
+  );
+
   await db.transaction('rw', [db.transactions, db.splits], async () => {
-    // Encrypt sensitive fields at rest. validateBalance already ran on the
-    // plaintext amounts above, so encryption here doesn't affect integrity.
-    const txAtRest: DBTransaction = { ...tx, description: await encField(tx.description) };
     await db.transactions.put(txAtRest);
     await db.splits.where('transaction_id').equals(tx.id).delete();
-    const encSplits = await Promise.all(
-      splits.map(async (s) => ({
-        ...s,
-        id: uuidv4(),
-        transaction_id: tx.id,
-        amount: 0,                       // plaintext amount zeroed on disk
-        amount_enc: await encAmount(s.amount),
-      })),
-    );
     await db.splits.bulkPut(encSplits);
   });
 }
