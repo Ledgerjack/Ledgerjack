@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { db, loadWithSplits, type DBTransaction, type DBSplit, type TransactionWithSplits } from './db';
-import { encField, encAmount } from './atRest';
+import { encField, encAmount, canEncryptAtRest } from './atRest';
 
 export type { DBTransaction, DBSplit, TransactionWithSplits };
 
@@ -59,15 +59,18 @@ export async function commitBalancedTransaction(
   // async and foreign to Dexie — awaiting it inside db.transaction() would make
   // the transaction inactive and cause the write to fail. validateBalance ran on
   // the plaintext amounts above, so encrypting now doesn't affect integrity.
+  // When no vault key is loaded, fields are stored plaintext (encField guards),
+  // and amounts are kept plaintext too (no amount_enc) so they never read as 0.
+  const vaultReady = canEncryptAtRest();
   const txAtRest: DBTransaction = { ...tx, description: await encField(tx.description) };
   const encSplits = await Promise.all(
-    splits.map(async (s) => ({
-      ...s,
-      id: uuidv4(),
-      transaction_id: tx.id,
-      amount: 0,                       // plaintext amount zeroed on disk
-      amount_enc: await encAmount(s.amount),
-    })),
+    splits.map(async (s) => {
+      const base = { ...s, id: uuidv4(), transaction_id: tx.id };
+      if (vaultReady) {
+        return { ...base, amount: 0, amount_enc: await encAmount(s.amount) };
+      }
+      return base; // plaintext amount, no amount_enc
+    }),
   );
 
   await db.transaction('rw', [db.transactions, db.splits], async () => {

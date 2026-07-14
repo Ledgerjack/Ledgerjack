@@ -17,7 +17,7 @@
  * while the vault is unlocked (which is always true when data is being shown).
  */
 
-import { encryptTextPayload, decryptTextPayload } from "./crypto";
+import { encryptTextPayload, decryptTextPayload, isVaultReady } from "./crypto";
 
 // Control-character sentinel — will not occur in text a user types.
 const MARKER = "\u0002LJE1\u0002";
@@ -26,11 +26,22 @@ export function isEncrypted(v: string | undefined | null): boolean {
   return typeof v === "string" && v.startsWith(MARKER);
 }
 
-/** Encrypt a string field for storage. Idempotent; empty stays empty. */
+/** True when at-rest encryption is available (vault key loaded). */
+export function canEncryptAtRest(): boolean {
+  return isVaultReady();
+}
+
+/**
+ * Encrypt a string field for storage. Idempotent; empty stays empty.
+ * If no vault key is loaded (no vault / locked session) it returns the plaintext
+ * unchanged rather than throwing — saving must never fail. Such rows encrypt
+ * later, when re-saved or via the "Encrypt older records" migration.
+ */
 export async function encField(plain: string | undefined | null): Promise<string> {
   const s = plain ?? "";
   if (s === "") return "";
   if (isEncrypted(s)) return s;
+  if (!isVaultReady()) return s;
   const { ciphertext, iv } = await encryptTextPayload(s);
   return `${MARKER}${iv}.${ciphertext}`;
 }

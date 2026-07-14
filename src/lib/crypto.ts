@@ -10,6 +10,11 @@
 let ephemeralMDK: CryptoKey | null = null;
 let ephemeralMDKExport: CryptoKey | null = null;
 
+/** True when the master key is loaded in memory (vault unlocked / just created). */
+export function isVaultReady(): boolean {
+  return ephemeralMDK !== null;
+}
+
 // FIX #5 — PBKDF2 iteration count raised to OWASP 2023 minimum (600k SHA-256).
 // The count is also embedded in the envelope so a future upgrade can re-derive
 // existing vaults at whatever iteration count they were originally sealed with.

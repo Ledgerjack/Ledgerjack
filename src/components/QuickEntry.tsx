@@ -59,18 +59,21 @@ export default function QuickEntry() {
     const debit = income ? cfg.cashAccount : category;
     const credit = income ? category : cfg.cashAccount;
 
-    await createTransaction(
-      {
-        date: new Date().toISOString().slice(0, 10),
-        description: parsed.description,
-        pending_review: true,
-      },
-      makeSimpleSplits(debit, credit, parsed.amountCents),
-    );
-
-    setFlash(`Added to review: ${parsed.description}`);
-    setText("");
-    setTimeout(() => setFlash(null), 2500);
+    try {
+      await createTransaction(
+        {
+          date: new Date().toISOString().slice(0, 10),
+          description: parsed.description,
+          pending_review: true,
+        },
+        makeSimpleSplits(debit, credit, parsed.amountCents),
+      );
+      setFlash(`Added to review: ${parsed.description}`);
+      setText("");
+      setTimeout(() => setFlash(null), 2500);
+    } catch (e: unknown) {
+      setFlash(e instanceof Error ? `Couldn't save: ${e.message}` : "Couldn't save — please try again.");
+    }
   }
 
   return (

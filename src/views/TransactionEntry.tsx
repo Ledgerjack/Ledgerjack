@@ -268,7 +268,7 @@ export default function TransactionEntry() {
       setTimeout(() => setSuccess(false), 3000);
     } catch (e: unknown) {
       if (e instanceof LedgerError) setSubmitError(e.message);
-      else setSubmitError('Failed to save transaction.');
+      else setSubmitError(e instanceof Error ? `Couldn't save: ${e.message}` : 'Failed to save transaction.');
     }
   };
 
