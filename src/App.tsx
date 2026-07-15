@@ -23,6 +23,7 @@ import Support from './views/Support';
 import ManualFaq from './views/ManualFaq';
 import JobEstimator from './views/JobEstimator';
 import TaxPotView from './views/TaxPot';
+import HealthCheck from './views/HealthCheck';
 import Insights from './views/Insights';
 import Statements from './views/Statements';
 import RulesManager from './views/RulesManager';
@@ -166,6 +167,7 @@ function AppContent() {
           {currentView === 'manual'          && <ManualFaq onBack={() => setCurrentView('settings')} />}
           {currentView === 'job-estimator'   && <JobEstimator onBack={() => setCurrentView('settings')} />}
           {currentView === 'tax-pot'         && <TaxPotView onBack={() => setCurrentView('settings')} onNavigate={(v) => setCurrentView(v as View)} />}
+          {currentView === 'health'          && <HealthCheck onBack={() => setCurrentView('settings')} onNavigate={(v) => setCurrentView(v as View)} />}
           {currentView === 'insights'        && <Insights onBack={() => setCurrentView('dashboard')} />}
           {currentView === 'statements'      && <Statements onBack={() => setCurrentView('settings')} />}
           {currentView === 'rules'           && <RulesManager onBack={() => setCurrentView('settings')} />}

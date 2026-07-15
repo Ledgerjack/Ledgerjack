@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import {
-  Shield, Download, Upload, Trash2, FileText, Clock, Globe, Key, AlertTriangle, CheckCircle2, LifeBuoy, BarChart2, Briefcase, FolderOpen, BookOpen, Car, Calculator, PiggyBank,
+  Shield, Download, Upload, Trash2, FileText, Clock, Globe, Key, AlertTriangle, CheckCircle2, LifeBuoy, BarChart2, Briefcase, FolderOpen, BookOpen, Car, Calculator, PiggyBank, Activity,
 } from 'lucide-react';
 import TipJar from '../components/TipJar';
 import AISettingsPanel from '../components/AISettingsPanel';
@@ -318,6 +318,20 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
           </>
         )}
       </div>
+
+      <button
+        onClick={() => onNavigate?.('health')}
+        className="w-full bg-white rounded-xl border border-line p-4 flex items-center justify-between text-left"
+      >
+        <div className="flex items-center gap-2">
+          <Activity className="w-5 h-5 text-brand-600" />
+          <div>
+            <h3 className="font-bold text-slate-900">Health check</h3>
+            <p className="text-xs text-slate-500">Check your records for problems</p>
+          </div>
+        </div>
+        <span className="text-ink-soft text-xl leading-none">›</span>
+      </button>
 
       <button
         onClick={() => onNavigate?.('tax-pot')}
