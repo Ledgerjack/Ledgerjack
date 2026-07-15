@@ -14,14 +14,13 @@ import { db } from "../db";
 import { decAmount } from "../atRest";
 import { createTransaction } from "../ledger";
 
-export type CisStatus = "registered" | "unregistered" | "gross";
-
-/** Standard CIS deduction rates (data, so they're easy to update). */
-export const CIS_RATES: Record<CisStatus, number> = {
-  registered: 0.20,   // verified/registered subcontractor
-  unregistered: 0.30, // not registered/verified
-  gross: 0.0,         // gross payment status
-};
+/**
+ * NOTE: LedgerJack deliberately does NOT hold CIS deduction rates.
+ * Rates change, and we are an organiser — not a tax adviser. The user enters
+ * the rate that actually applies to their subcontractor (it's shown on the
+ * payment and deduction statement, and verified with HMRC), and we do the
+ * arithmetic and the bookkeeping with it.
+ */
 
 export const SUBCONTRACTOR_EXPENSE = "Expenses:Cost of Sales:Subcontractors";
 export const CIS_LIABILITY = "Liabilities:CIS Deductions";
@@ -35,9 +34,12 @@ export interface CisCalc {
   net: number;       // cents actually paid
 }
 
-/** Compute the CIS deduction and net payment. All amounts in cents. */
-export function calcCis(labour: number, materials: number, status: CisStatus): CisCalc {
-  const rate = CIS_RATES[status];
+/**
+ * Compute the CIS deduction and net payment. All amounts in cents.
+ * `ratePct` is the deduction rate the USER supplies (e.g. 20 for 20%).
+ */
+export function calcCis(labour: number, materials: number, ratePct: number): CisCalc {
+  const rate = Number.isFinite(ratePct) ? Math.max(0, ratePct) / 100 : 0;
   const deduction = Math.round(labour * rate);
   const gross = labour + materials;
   return { labour, materials, gross, rate, deduction, net: gross - deduction };
@@ -63,13 +65,13 @@ export async function recordSubcontractorPayment(params: {
   subcontractor: string;
   labour: number;
   materials: number;
-  status: CisStatus;
+  ratePct: number;
   cashAccount: string;
   date: string;
   trade?: string;
 }): Promise<CisCalc> {
   await ensureCisAccount();
-  const c = calcCis(params.labour, params.materials, params.status);
+  const c = calcCis(params.labour, params.materials, params.ratePct);
 
   const splits = [
     { account_id: SUBCONTRACTOR_EXPENSE, amount: c.gross, memo: "Subcontractor cost" },

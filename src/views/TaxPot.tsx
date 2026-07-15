@@ -7,7 +7,7 @@ import { PiggyBank, AlertTriangle } from "lucide-react";
 import { useApp } from "../contexts/AppContext";
 import TaxPotCard from "../components/TaxPotCard";
 
-export default function TaxPotView({ onBack, onNavigate }: { onBack?: () => void; onNavigate: (v: string) => void }) {
+export default function TaxPotView({ onBack }: { onBack?: () => void }) {
   const { region } = useApp();
 
   return (
@@ -28,7 +28,7 @@ export default function TaxPotView({ onBack, onNavigate }: { onBack?: () => void
       </div>
 
       {region === "uk" ? (
-        <TaxPotCard onNavigate={onNavigate} />
+        <TaxPotCard />
       ) : (
         <div className="bg-white rounded-xl border border-line p-6 text-center">
           <p className="text-sm text-ink-soft">A tax-pot estimate isn't available for your region yet. You can still track income and expenses, and export figures for your accountant.</p>

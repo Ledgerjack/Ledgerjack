@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Key, Zap, Cpu } from 'lucide-react';
+import { Key, Zap, Cpu, Receipt } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { modelsForRole, getSelectedModel, setSelectedModel } from '../lib/ai/aiModels';
 
@@ -57,6 +57,15 @@ export default function AISettingsPanel() {
             </button>
           )}
         </div>
+
+        {/* AI credits are a business cost — most people never think to claim them. */}
+        <div className="bg-brand-50 border border-brand-200 rounded-lg p-2.5 flex items-start gap-2">
+          <Receipt className="w-3.5 h-3.5 text-brand-600 shrink-0 mt-0.5" />
+          <p className="text-[11px] text-brand-800 leading-relaxed">
+            <strong>Topped up your AI credits?</strong> What you pay OpenRouter to run scanning is a cost of running your business — so keep the receipt and add it to your ledger like any other expense. Easy to forget, and it's your money. Check with your accountant if you're unsure what's claimable.
+          </p>
+        </div>
+
         <p className="text-[10px] text-ink-soft leading-relaxed">
           One OpenRouter key powers all AI: OpenAI models for scanning and entries,
           Anthropic (Opus 4.8 / Fable 5) for insights. Your key is stored in your

@@ -320,6 +320,20 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
       </div>
 
       <button
+        onClick={() => onNavigate?.('provisional')}
+        className="w-full bg-white rounded-xl border border-line p-4 flex items-center justify-between text-left"
+      >
+        <div className="flex items-center gap-2">
+          <BookOpen className="w-5 h-5 text-brand-600" />
+          <div>
+            <h3 className="font-bold text-slate-900">Your provisional figures</h3>
+            <p className="text-xs text-slate-500">Your tax-year totals, and HMRC's own calculator</p>
+          </div>
+        </div>
+        <span className="text-ink-soft text-xl leading-none">›</span>
+      </button>
+
+      <button
         onClick={() => onNavigate?.('health')}
         className="w-full bg-white rounded-xl border border-line p-4 flex items-center justify-between text-left"
       >

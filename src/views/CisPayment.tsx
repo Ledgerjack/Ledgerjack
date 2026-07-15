@@ -11,7 +11,7 @@ import { useApp, useRegionConfig } from "../contexts/AppContext";
 import { formatCurrency, parseCurrencyInput } from "../lib/currency";
 import {
   calcCis, recordSubcontractorPayment, cisDeductedInPeriod,
-  CIS_RATES, type CisStatus,
+  type CisCalc,
 } from "../lib/cis/cis";
 
 function fyWindow(startMonth: number, startDay: number, now = new Date()) {
@@ -33,7 +33,7 @@ export default function CisPayment({ onBack }: { onBack: () => void }) {
   const [subcontractor, setSubcontractor] = useState("");
   const [labour, setLabour] = useState("");
   const [materials, setMaterials] = useState("");
-  const [status, setStatus] = useState<CisStatus>("registered");
+  const [ratePct, setRatePct] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [ytd, setYtd] = useState(0);
   const [saved, setSaved] = useState(false);
@@ -41,7 +41,8 @@ export default function CisPayment({ onBack }: { onBack: () => void }) {
 
   const labourC = parseCurrencyInput(labour);
   const materialsC = parseCurrencyInput(materials);
-  const calc = calcCis(labourC, materialsC, status);
+  const rateNum = parseFloat(ratePct);
+  const calc = calcCis(labourC, materialsC, Number.isFinite(rateNum) ? rateNum : 0);
 
   async function refreshYtd() {
     setYtd(await cisDeductedInPeriod(win.from, win.to));
@@ -53,7 +54,7 @@ export default function CisPayment({ onBack }: { onBack: () => void }) {
     setBusy(true);
     try {
       await recordSubcontractorPayment({
-        subcontractor, labour: labourC, materials: materialsC, status,
+        subcontractor, labour: labourC, materials: materialsC, ratePct: Number.isFinite(rateNum) ? rateNum : 0,
         cashAccount: cfg.cashAccount, date,
       });
       setSaved(true);
@@ -88,12 +89,17 @@ export default function CisPayment({ onBack }: { onBack: () => void }) {
             <input value={materials} onChange={(e) => setMaterials(e.target.value)} inputMode="decimal" placeholder="0.00" className="mt-1 w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </label>
         </div>
-        <label className="block text-xs text-slate-500">Subcontractor status
-          <select value={status} onChange={(e) => setStatus(e.target.value as CisStatus)} className="mt-1 w-full border-2 border-slate-300 rounded-lg px-2 py-2 text-sm bg-white">
-            <option value="registered">Registered — {Math.round(CIS_RATES.registered * 100)}%</option>
-            <option value="unregistered">Not registered — {Math.round(CIS_RATES.unregistered * 100)}%</option>
-            <option value="gross">Gross payment status — 0%</option>
-          </select>
+        <label className="block text-xs text-slate-500">CIS deduction rate (%)
+          <input
+            value={ratePct}
+            onChange={(e) => setRatePct(e.target.value)}
+            inputMode="decimal"
+            placeholder="Enter the rate that applies"
+            className="mt-1 w-full border border-line rounded-lg px-3 py-2 text-sm"
+          />
+          <span className="mt-1 block text-[11px] text-ink-soft">
+            Use the rate that actually applies to this subcontractor — it's on their payment and deduction statement, and you can verify their status with HMRC. We don't set this for you.
+          </span>
         </label>
         <label className="block text-xs text-slate-500">Date
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="mt-1 w-full border-2 border-slate-300 rounded-lg px-2 py-2 text-sm" />
@@ -136,8 +142,7 @@ export default function CisPayment({ onBack }: { onBack: () => void }) {
         <p className="text-[11px] text-amber-800">
           LedgerJack records CIS deductions so your books and SA103 are right, but it does
           <span className="font-semibold"> not file your monthly CIS return (CIS300)</span> or verify
-          subcontractors with HMRC — those remain your responsibility. Rates shown are the standard
-          20% / 30% / 0%; check a subcontractor's status with HMRC. This isn't tax advice.
+          subcontractors with HMRC — those remain your responsibility. <span className="font-semibold">We don't set the deduction rate for you</span>: check the subcontractor's status and the current rate with HMRC, and discuss anything you're unsure about with your accountant. This isn't tax advice.
         </p>
       </div>
     </div>

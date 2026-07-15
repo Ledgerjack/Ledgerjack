@@ -185,7 +185,7 @@ export default function Invoices({ onBack, onNavigate }: { onBack: () => void; o
         <div className="bg-white rounded-xl border border-line p-4 space-y-2">
           <div className="flex gap-2">
             <label className="flex-1 text-xs text-slate-500">Tax rate % (optional)
-              <input type="number" min="0" value={draft.taxRatePct ?? ""} onChange={(e) => setDraft({ ...draft, taxRatePct: e.target.value ? parseFloat(e.target.value) : undefined })} placeholder="e.g. 20" className="mt-1 w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
+              <input type="number" min="0" value={draft.taxRatePct ?? ""} onChange={(e) => setDraft({ ...draft, taxRatePct: e.target.value ? parseFloat(e.target.value) : undefined })} placeholder="Your rate %" className="mt-1 w-full border-2 border-slate-300 rounded-lg px-3 py-2 text-sm" />
             </label>
             <label className="w-28 text-xs text-slate-500">Currency
               <select

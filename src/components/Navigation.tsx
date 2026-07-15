@@ -37,7 +37,8 @@ export type View =
   | 'manual'
   | 'job-estimator'
   | 'tax-pot'
-  | 'health';
+  | 'health'
+  | 'provisional';
 
 interface NavProps {
   currentView: View;
