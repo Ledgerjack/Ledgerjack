@@ -1,15 +1,23 @@
 /**
- * destinations — where an ENCRYPTED backup goes. The mandatory choice is always
- * satisfiable with a working option (encrypted file, or WebDAV):
+ * destinations — where an ENCRYPTED backup goes.
  *
- *  - device   : download the encrypted backup file (store it wherever you like —
- *               your own cloud drive, email, USB). Works everywhere, no backend.
+ *  - device   : download the encrypted backup file, then keep a copy off this
+ *               device yourself — your cloud drive, email, USB. Works everywhere,
+ *               no backend, no third-party account.
  *  - webdav   : upload straight to your own Nextcloud/WebDAV server. Works when
  *               the server allows browser (CORS) requests; we surface a clear
  *               error if it doesn't.
- *  - gdrive/dropbox/icloud : one-tap providers — need the LedgerJack backend
- *               (their OAuth secrets can't live in the app), so they're flagged
- *               "coming soon" like the live bank feed.
+ *  - server   : LedgerJack's own encrypted server — flagged "coming soon".
+ *
+ * DESIGN DECISION (deliberate): there are no Google Drive / Dropbox / iCloud
+ * integrations, and there won't be. Every phone and laptop already has a
+ * "Share"/"Save to Files" sheet that reaches all of them — plus email and USB,
+ * which no OAuth integration covers. Building it would mean client IDs, brand
+ * verification, refresh tokens sitting in browser storage, and a dependency that
+ * breaks silently whenever a provider changes policy — all to do a worse job of
+ * what the operating system already does. We don't connect to anyone's cloud
+ * account, so we can't leak one. Saving the copy is the user's job; reminding
+ * them is ours.
  *
  * The backup passphrase and any WebDAV password are stored ENCRYPTED on-device
  * (via the vault), never in the clear, so scheduled backups can run without
@@ -21,7 +29,7 @@ import { encryptTextPayload, decryptTextPayload } from "../crypto";
 import { downloadFile } from "../backup";
 import { exportEncryptedBackup } from "./encryptedBackup";
 
-export type DestinationKind = "device" | "webdav" | "gdrive" | "dropbox" | "icloud" | "server";
+export type DestinationKind = "device" | "webdav" | "server";
 
 export interface BackupDestination {
   kind: DestinationKind;
@@ -32,7 +40,7 @@ export interface BackupDestination {
 const DEST_KEY = "backup_destination";
 const SECRET_KEY = "backup_secrets_enc"; // { ciphertext, iv } of JSON { passphrase, webdavPassword }
 
-export const NEEDS_BACKEND: DestinationKind[] = ["gdrive", "dropbox", "icloud", "server"];
+export const NEEDS_BACKEND: DestinationKind[] = ["server"];
 
 export async function loadDestination(): Promise<BackupDestination | null> {
   const row = await db.settings.get(DEST_KEY);

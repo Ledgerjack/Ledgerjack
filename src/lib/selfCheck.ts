@@ -223,16 +223,19 @@ export async function runSelfCheck(): Promise<SelfCheckReport> {
   } else {
     const age = Date.now() - last;
     const days = Math.floor(age / DAY);
+    // Weekly is the habit we ask for (and BackupReminder nags at 7 days), so the
+    // health check must agree — a stricter reminder and a laxer health check
+    // would just teach people to ignore one of them.
     checks.push(
-      age > 30 * DAY
+      age > 7 * DAY
         ? {
             id: "backup",
             label: "Backup",
             status: "warn",
-            detail: `Your last backup was ${days} days ago.`,
+            detail: `Your last backup was ${days} days ago. Aim for one a week, kept both here and in a cloud drive of your choice.`,
             action: { label: "Back up now", view: "cloud-backup" },
           }
-        : { id: "backup", label: "Backup", status: "ok", detail: `Last backup ${days === 0 ? "today" : `${days} day${days === 1 ? "" : "s"} ago`}.` },
+        : { id: "backup", label: "Backup", status: "ok", detail: `Last backup ${days === 0 ? "today" : `${days} day${days === 1 ? "" : "s"} ago`}. Remember to keep a copy off this device too.` },
     );
   }
 

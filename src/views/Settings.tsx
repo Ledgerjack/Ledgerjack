@@ -120,7 +120,7 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
       downloadFile(json, `ledgerjack-backup-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
       updateBackupTimestamp();
       addExportAuditEntry('backup');
-      setExportMsg('Backup exported successfully.');
+      setExportMsg('Backup saved. Keep a copy off this device too — see Backup & security.');
       setTimeout(() => setExportMsg(''), 3000);
     } catch {
       setExportMsg('Export failed.');
@@ -606,8 +606,16 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
           onClick={handleExportBackup}
           className="w-full bg-slate-100 border border-line text-slate-700 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-200 flex items-center justify-center gap-1.5"
         >
-          <Download className="w-4 h-4" /> Export Encrypted Backup
+          <Download className="w-4 h-4" /> Export Backup File
         </button>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 flex gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <p className="text-[11px] text-amber-800 leading-relaxed">
+            <strong>This file is only partly protected.</strong> Your descriptions, amounts and receipts are encrypted inside it, but notes, category names and mileage logs are readable by anyone who opens it. It's fine on a device you control.{' '}
+            <strong>For a copy you put in a cloud drive or email, use the passphrase-encrypted backup</strong> in Backup &amp; security instead — that one is unreadable without your passphrase.
+          </p>
+        </div>
 
         <button
           onClick={() => backupInputRef.current?.click()}

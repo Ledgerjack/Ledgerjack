@@ -7,14 +7,31 @@
  * uploaded anywhere in the clear. This encrypts it end-to-end with a passphrase;
  * the cloud only ever sees ciphertext.
  *
- * Format (JSON): { magic:"LJENC1", v:1, salt, iv, ct }  (all base64)
- * Key: PBKDF2-SHA256(passphrase, salt, 210k) -> AES-GCM-256.
+ * Format (JSON): { magic:"LJENC1", v:2, salt, iv, ct }  (all base64)
+ * Key: PBKDF2-SHA256(passphrase, salt, iterations) -> AES-GCM-256.
+ *
+ * VERSIONS (the `v` field selects the KDF strength, so old backups keep working):
+ *   v1 — 210,000 iterations. Legacy. Still readable, never written any more.
+ *   v2 — 600,000 iterations. Current. Matches the local vault (OWASP 2023).
+ *
+ * WHY v2: this blob is the artefact users are encouraged to copy into their own
+ * cloud drive or email to themselves. That means it can be captured and attacked
+ * OFFLINE, at leisure, with GPUs — a far harsher threat model than the on-device
+ * vault. It made no sense for the most exposed artefact to have the weakest key
+ * derivation, so it now matches the vault rather than undercutting it.
  */
 
 import { exportBackup, importBackup } from "../backup";
 
 const MAGIC = "LJENC1";
-const ITERATIONS = 210000;
+const ITERATIONS_V1 = 210_000; // legacy backups only
+const ITERATIONS_V2 = 600_000; // current — matches crypto.ts PBKDF2_ITERATIONS
+const CURRENT_VERSION = 2;
+
+/** Pick the KDF strength a blob was written with. Unknown/missing → legacy. */
+function iterationsForVersion(v: unknown): number {
+  return v === 2 ? ITERATIONS_V2 : ITERATIONS_V1;
+}
 
 /* chunked base64 (safe for large backups) */
 function b64(bytes: Uint8Array): string {
@@ -32,10 +49,10 @@ function unb64(s: string): Uint8Array {
   return out;
 }
 
-async function deriveKey(passphrase: string, salt: Uint8Array): Promise<CryptoKey> {
+async function deriveKey(passphrase: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {
   const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(passphrase) as BufferSource, "PBKDF2", false, ["deriveKey"]);
   return crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt: salt as BufferSource, iterations: ITERATIONS, hash: "SHA-256" },
+    { name: "PBKDF2", salt: salt as BufferSource, iterations, hash: "SHA-256" },
     base,
     { name: "AES-GCM", length: 256 },
     false,
@@ -49,9 +66,9 @@ export async function exportEncryptedBackup(passphrase: string): Promise<string>
   const plainJson = await exportBackup();
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const key = await deriveKey(passphrase, salt);
+  const key = await deriveKey(passphrase, salt, ITERATIONS_V2);
   const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv as BufferSource }, key, new TextEncoder().encode(plainJson) as BufferSource);
-  return JSON.stringify({ magic: MAGIC, v: 1, salt: b64(salt), iv: b64(iv), ct: b64(new Uint8Array(ct)) });
+  return JSON.stringify({ magic: MAGIC, v: CURRENT_VERSION, salt: b64(salt), iv: b64(iv), ct: b64(new Uint8Array(ct)) });
 }
 
 /** Restore from a blob — handles both encrypted (LJENC1) and legacy plain backups. */
@@ -67,7 +84,9 @@ export async function importEncryptedBackup(blob: string, passphrase: string): P
     await importBackup(blob);
     return;
   }
-  const key = await deriveKey(passphrase, unb64(outer.salt));
+  // Old backups were written with a weaker KDF; read them with their own
+  // iteration count so upgrading never orphans an existing file.
+  const key = await deriveKey(passphrase, unb64(outer.salt), iterationsForVersion(outer.v));
   let ptBuf: ArrayBuffer;
   try {
     ptBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(outer.iv) as BufferSource }, key, unb64(outer.ct) as BufferSource);

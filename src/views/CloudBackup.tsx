@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, ShieldCheck, HardDriveDownload, Server, Cloud, Upload, CheckCircle2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ShieldCheck, HardDriveDownload, Server, Upload, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useApp } from "../contexts/AppContext";
 import {
   loadDestination, saveDestination, saveBackupSecrets, loadBackupSecrets, runBackup,
@@ -15,6 +15,7 @@ import { getLastBackupTimestamp, readFileAsText, downloadFile } from "../lib/bac
 import { nativeShareFile } from "../lib/share/share";
 import { Mail } from "lucide-react";
 import RecoveryKeyBackup from "../components/RecoveryKeyBackup";
+import OffDeviceCopyCard from "../components/OffDeviceCopyCard";
 import EncryptAtRestCard from "../components/EncryptAtRestCard";
 
 export default function CloudBackup({ onBack }: { onBack: () => void }) {
@@ -108,13 +109,10 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
       {/* Destination */}
       <div className="space-y-2">
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Where your data lives — your choice</p>
-        <p className="text-[11px] text-slate-500 -mt-1">Our encrypted server, a cloud you control, or only this device. It's always end-to-end encrypted, so only you can read it.</p>
+        <p className="text-[11px] text-slate-500 -mt-1">A file you keep, a cloud you run yourself, or our encrypted server later. It's always end-to-end encrypted, so only you can read it.</p>
         {opt("server", "LedgerJack encrypted server (auto-sync)", <ShieldCheck className="w-5 h-5 text-slate-500" />, true)}
         {opt("device", "Encrypted file (save anywhere)", <HardDriveDownload className="w-5 h-5 text-slate-500" />)}
         {opt("webdav", "Your Nextcloud / WebDAV server", <Server className="w-5 h-5 text-slate-500" />)}
-        {opt("gdrive", "Google Drive", <Cloud className="w-5 h-5 text-slate-500" />, true)}
-        {opt("dropbox", "Dropbox", <Cloud className="w-5 h-5 text-slate-500" />, true)}
-        {opt("icloud", "iCloud Drive", <Cloud className="w-5 h-5 text-slate-500" />, true)}
       </div>
 
       <div className="bg-white rounded-xl border border-line p-3 flex items-start gap-2">
@@ -198,6 +196,9 @@ export default function CloudBackup({ onBack }: { onBack: () => void }) {
           <p className={`text-xs ${msg.ok ? "text-emerald-700" : "text-red-700"}`}>{msg.text}</p>
         </div>
       )}
+
+      {/* Keep a copy off this device — the nudge that replaces cloud integrations */}
+      <OffDeviceCopyCard />
 
       {/* Recovery key backup — device + email */}
       <RecoveryKeyBackup />
