@@ -24,6 +24,13 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // Allow intentionally-unused names when prefixed with underscore
+      // (e.g. a required-but-unused function parameter). This is the standard
+      // convention and keeps the "unused" rule meaningful for genuine cases.
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+      ],
     },
   }
 );

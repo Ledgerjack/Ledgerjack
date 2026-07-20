@@ -7,6 +7,7 @@ vi.mock("../src/lib/db", () => ({}));
 vi.mock("../src/lib/regions", () => ({ TAX_REGIONS: {}, }));
 vi.mock("../src/lib/currency", () => ({ parseCurrencyInput: vi.fn() }));
 vi.mock("../src/lib/ai/aiUsage", () => ({ recordUsage: vi.fn() }));
+vi.mock("../src/lib/ai/openrouterClient", () => ({ callOpenRouter: vi.fn() }));
 
 import { confidenceOf, needsReview, CONFIDENCE_THRESHOLD } from "../src/lib/ai";
 
