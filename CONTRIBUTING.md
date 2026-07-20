@@ -24,16 +24,19 @@ npm install
 npm run dev
 npm run typecheck
 npm run lint
+npm test          # unit tests (Vitest)
 ```
 
 ## Money & tax logic — always add a self-test
 
-Money is stored as **signed integer cents** (debit +, credit −), and every
+Money is stored as **signed integer pence** (debit +, credit −), and every
 transaction must balance (splits sum to zero). Any change to money, tax, VAT,
-CIS, statements, budgets, or date maths **must** come with a small self-test that
-proves the arithmetic (see `docs/*-NOTES.md` for the style — transpile the lib,
-stub its data deps, assert exact numbers). PRs that touch these areas without a
-test will be asked for one.
+CIS, statements, budgets, or date maths **must** come with a unit test that
+proves the arithmetic. Tests live in `tests/` and run with `npm test` (Vitest);
+see the existing specs (e.g. `tests/cis.test.ts`, `tests/deadlines.test.ts`) for
+the style — mock the data-layer deps and assert exact numbers. PRs that touch
+these areas without a test will be asked for one. **New code requires new tests**,
+and CI runs the whole suite on every push and pull request.
 
 ## Security-sensitive areas (extra review)
 

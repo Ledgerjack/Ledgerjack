@@ -1,0 +1,26 @@
+name: Dependency audit
+
+# Weekly check for known-vulnerable dependencies. Supports the badge criteria on
+# promptly detecting and fixing publicly-known vulnerabilities in dependencies.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays, 06:00 UTC
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      # Fail only on high/critical so routine advisories don't block work,
+      # but anything serious surfaces immediately.
+      - name: npm audit (high and critical)
+        run: npm audit --audit-level=high

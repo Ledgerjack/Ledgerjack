@@ -3,9 +3,15 @@
 ## Reporting a vulnerability
 
 Please report security issues **privately**, not via public GitHub issues.
-Email: `security@ledgerjack.app` (replace with your real contact before launch).
-We aim to acknowledge reports quickly and will credit responsible disclosure.
-Please give us reasonable time to fix an issue before disclosing it publicly.
+
+The preferred route is GitHub's private vulnerability reporting: go to the
+**Security** tab of the repository and choose **"Report a vulnerability"**. This
+opens a private advisory visible only to the maintainers — no email address or
+account with us is needed.
+
+We aim to acknowledge reports within a few days and will credit responsible
+disclosure. Please give us reasonable time to fix an issue before disclosing it
+publicly.
 
 ## Security model
 
@@ -17,7 +23,8 @@ Please give us reasonable time to fix an issue before disclosing it publicly.
   (`supabase/functions/hmrc-relay`) is zero-knowledge: it forwards signed requests
   and never sees decrypted financial data. There is no analytics or data sale.
 - **Backups are encrypted before leaving the device.** Cloud/off-device backups
-  are wrapped in AES-GCM (PBKDF2, 210k iterations) so a provider only ever sees
+  are wrapped in AES-GCM (PBKDF2, 600k iterations for backups written by the
+  current version; older 210k backups remain readable) so a provider only ever sees
   ciphertext. By default the backup is protected by the user's recovery key (no
   new secret to lose).
 - **Biometric unlock** uses the WebAuthn PRF extension to wrap the recovery key

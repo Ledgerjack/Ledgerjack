@@ -25,6 +25,7 @@ import JobEstimator from './views/JobEstimator';
 import TaxPotView from './views/TaxPot';
 import HealthCheck from './views/HealthCheck';
 import ProvisionalFigures from './views/ProvisionalFigures';
+import ReportProblem from './views/ReportProblem';
 import Insights from './views/Insights';
 import Statements from './views/Statements';
 import RulesManager from './views/RulesManager';
