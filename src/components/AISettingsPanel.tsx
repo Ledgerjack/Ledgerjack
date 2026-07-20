@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Key, Zap, Cpu, Receipt } from 'lucide-react';
+import { Zap, Cpu, Receipt } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { modelsForRole, getSelectedModel, setSelectedModel } from '../lib/ai/aiModels';
 

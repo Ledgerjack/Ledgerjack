@@ -28,7 +28,7 @@ interface DedupRow {
   matchedDescription?: string;
 }
 
-async function detectDuplicates(rows: CSVRow[], region: string): Promise<DedupRow[]> {
+async function detectDuplicates(rows: CSVRow[], _region: string): Promise<DedupRow[]> {
   const rawTxns = await db.transactions.toArray();
   // Descriptions are encrypted at rest — decrypt before comparing.
   const existingTxns = await Promise.all(

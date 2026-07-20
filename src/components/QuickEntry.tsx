@@ -7,13 +7,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Zap, Mic, MicOff } from "lucide-react";
-import { useApp, useRegionConfig } from "../contexts/AppContext";
+import { useRegionConfig } from "../contexts/AppContext";
 import { createTransaction, makeSimpleSplits } from "../lib/ledger";
 import { parseLine } from "../lib/quickentry/parseLine";
 import { loadRules, matchRule, type CategoryRule } from "../lib/rules/rules";
 
 export default function QuickEntry() {
-  const { region } = useApp();
   const cfg = useRegionConfig();
   const [text, setText] = useState("");
   const [rules, setRules] = useState<CategoryRule[]>([]);

@@ -11,7 +11,6 @@ import { useApp, useRegionConfig } from "../contexts/AppContext";
 import { formatCurrency, parseCurrencyInput } from "../lib/currency";
 import {
   calcCis, recordSubcontractorPayment, cisDeductedInPeriod,
-  type CisCalc,
 } from "../lib/cis/cis";
 
 function fyWindow(startMonth: number, startDay: number, now = new Date()) {

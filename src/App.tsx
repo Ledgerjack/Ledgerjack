@@ -2,7 +2,7 @@
 // so the API key can be encrypted/decrypted via the vault MDK.
 // After the vault unlocks, reloadApiKey() is called to decrypt and surface the key.
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { CryptoProvider, useCrypto } from './contexts/CryptoContext';
 import { AppProvider, type CryptoHelpers } from './contexts/AppContext';
 import { SessionProvider, useSession } from './contexts/SessionContext';

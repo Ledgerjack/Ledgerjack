@@ -527,7 +527,7 @@ export default function TransactionEntry() {
               onChange={(e) => { if (e.target.files?.[0]) handleFileSelect(e.target.files[0]); }}
             />
             <button
-              onClick={handleAIParse}
+              onClick={() => handleAIParse()}
               disabled={aiLoading || !aiInput.trim()}
               className="flex-1 flex items-center justify-center gap-1.5 bg-brand-500 text-white font-bold py-2.5 rounded-xl hover:bg-brand-600 transition-colors disabled:opacity-50 shadow-sm"
             >
