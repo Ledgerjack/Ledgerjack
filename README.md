@@ -1,4 +1,5 @@
 # LedgerJack
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13674/badge)](https://www.bestpractices.dev/projects/13674)
 
 **Free, private, AI-powered — files to HMRC, never sells your data.**
 
