@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sparkles, Camera, Upload, Type, ChevronDown, X, Loader2, GitBranch, List, CheckCircle2, Pencil } from 'lucide-react';
+import { Sparkles, Camera, Upload, Type, ChevronDown, X, Loader2, GitBranch, List, CheckCircle2, Pencil, AlertTriangle } from 'lucide-react';
 import { useApp, useRegionConfig } from '../contexts/AppContext';
 import { useCrypto } from '../contexts/CryptoContext';
 import { createTransaction, makeSimpleSplits, LedgerError } from '../lib/ledger';
-import { parseWithAI, aiParsedToPendingTransaction, type AIParsedTransaction } from '../lib/ai';
+import { parseWithAI, aiParsedToPendingTransaction, needsReview, confidenceOf, CONFIDENCE_THRESHOLD, type AIParsedTransaction } from '../lib/ai';
 import { getSelectedModel } from '../lib/ai/aiModels';
 import { blobToUint8Array } from '../lib/image';
 import { useAttachment } from '../hooks/useAttachment';
@@ -318,6 +318,24 @@ export default function TransactionEntry() {
               <p className="text-xs text-slate-500">
                 Please review this before it's saved — AI can misread receipts. Make sure the <span className="font-semibold">amount</span> is right.
               </p>
+
+              {/* The model tells us when it's unsure — so we say so, rather than
+                  presenting a shaky number with the same confidence as a clear one. */}
+              {needsReview(pendingConfirm) && (
+                <div className="bg-amber-50 border border-amber-300 rounded-lg p-2.5 flex gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-bold text-amber-800">
+                      {confidenceOf(pendingConfirm.amount_confidence) < CONFIDENCE_THRESHOLD
+                        ? "Not sure it read the amount correctly — please check it against the receipt."
+                        : "Not sure about the category — please check it's filed in the right place."}
+                    </p>
+                    {pendingConfirm.uncertain_about && (
+                      <p className="text-[11px] text-amber-800 leading-relaxed">{pendingConfirm.uncertain_about}</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="bg-slate-50 border border-line rounded-lg p-3 space-y-1">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-ink-soft">Amount</p>

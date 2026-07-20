@@ -13,6 +13,9 @@ import { TAX_REGIONS, getFlagEmoji, type TaxRegion } from '../lib/regions';
 import { exportBackup, importBackup, downloadFile, readFileAsText } from '../lib/backup';
 import { parseCSV, csvRowToPendingTransaction, type CSVRow } from '../lib/csv';
 import { decField } from '../lib/atRest';
+import DeadlineCalendarCard from '../components/DeadlineCalendarCard';
+import DemoDataCard from '../components/DemoDataCard';
+import IsThisForYouCard from '../components/IsThisForYouCard';
 import { createTransaction } from '../lib/ledger';
 import { loadRules } from '../lib/rules/rules';
 import { db } from '../lib/db';
@@ -319,6 +322,10 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
         )}
       </div>
 
+      <DemoDataCard />
+
+      <DeadlineCalendarCard />
+
       <button
         onClick={() => onNavigate?.('provisional')}
         className="w-full bg-white rounded-xl border border-line p-4 flex items-center justify-between text-left"
@@ -342,6 +349,20 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
           <div>
             <h3 className="font-bold text-slate-900">Health check</h3>
             <p className="text-xs text-slate-500">Check your records for problems</p>
+          </div>
+        </div>
+        <span className="text-ink-soft text-xl leading-none">›</span>
+      </button>
+
+      <button
+        onClick={() => onNavigate?.('report')}
+        className="w-full bg-white rounded-xl border border-line p-4 flex items-center justify-between text-left"
+      >
+        <div className="flex items-center gap-2">
+          <LifeBuoy className="w-5 h-5 text-brand-600" />
+          <div>
+            <h3 className="font-bold text-slate-900">Report a problem</h3>
+            <p className="text-xs text-slate-500">Tell us what's wrong — nothing leaves your device unless you share it</p>
           </div>
         </div>
         <span className="text-ink-soft text-xl leading-none">›</span>
@@ -899,6 +920,8 @@ export default function Settings({ onNavigate }: { onNavigate?: (view: View) => 
           </div>
         )}
       </div>
+
+      <IsThisForYouCard />
 
       <p className="text-center text-[11px] text-ink-soft pt-2 pb-1">{APP_MOTTO}</p>
     </div>

@@ -30,6 +30,16 @@ export interface AIParsedTransaction {
   debit_account: string;
   credit_account: string;
   job_tag?: string;
+  /**
+   * The model's own confidence, 0–1, in the AMOUNT it read and the CATEGORY it
+   * chose. Used to decide whether to wave the entry through or stop and ask.
+   * Borrowed from the Andon idea: don't fail silently — raise a flag when unsure.
+   * Absent means "the model didn't say", which we treat as unsure.
+   */
+  amount_confidence?: number;
+  category_confidence?: number;
+  /** Short, plain-English note on anything the model struggled to read. */
+  uncertain_about?: string;
   line_items?: LineItem[];
   split_suggestion?: Array<{
     description: string;
@@ -38,6 +48,22 @@ export interface AIParsedTransaction {
     credit_account: string;
     job_tag?: string;
   }>;
+}
+
+/** Below this, we stop and ask the user rather than presenting a figure as fact. */
+export const CONFIDENCE_THRESHOLD = 0.8;
+
+/** Confidence when the model didn't give one — unknown is treated as unsure. */
+export function confidenceOf(v: number | undefined): number {
+  return typeof v === "number" && Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0;
+}
+
+/** True when anything about this parse warrants a second look from a human. */
+export function needsReview(p: AIParsedTransaction): boolean {
+  return (
+    confidenceOf(p.amount_confidence) < CONFIDENCE_THRESHOLD ||
+    confidenceOf(p.category_confidence) < CONFIDENCE_THRESHOLD
+  );
 }
 
 const ENHANCED_SYSTEM_PROMPT = `You are an expert pre-accounting parser for self-employed tradespeople and small business owners.
@@ -65,6 +91,9 @@ Return ONLY valid JSON — no markdown, no explanation:
   "debit_account": "full account path",
   "credit_account": "full account path",
   "job_tag": "string or null",
+  "amount_confidence": number between 0 and 1,
+  "category_confidence": number between 0 and 1,
+  "uncertain_about": "short plain-English note, or null",
   "line_items": [
     { "description": "item name", "quantity": 2, "unit_price": 5.00, "total": 10.00, "account": "account path" }
   ],
@@ -75,6 +104,19 @@ Return ONLY valid JSON — no markdown, no explanation:
 }
 
 Omit "line_items" if there is only a single total. Omit "split_suggestion" if everything is clearly one type.
+
+## Confidence — be honest, not polite
+"amount_confidence" is how sure you are that you read the TOTAL correctly.
+"category_confidence" is how sure you are that the accounts you chose are right.
+Report LOW confidence (below 0.8) whenever any of these are true — this is expected and useful, not a failure:
+ - the image is blurred, cropped, faded, crumpled or partly unreadable
+ - several candidate totals appear (subtotal, tax, total, change given, a tip)
+ - the merchant is unclear, or could plausibly be personal rather than business
+ - handwriting is ambiguous, or a digit could be misread (1/7, 3/8, 0/6)
+ - the receipt is in a currency or format you're unsure about
+A wrong number stated confidently is far worse than an honest "please check this" —
+the person relies on these figures for their tax. Never inflate confidence to seem helpful.
+Put whatever you struggled with in "uncertain_about" (e.g. "total could be 12.50 or 12.60 — digit unclear").
 
 ## Account Hierarchy
 - Assets:Cash, Assets:Bank, Assets:Receivables (or Debtors for UK)

@@ -4,6 +4,9 @@
 
 export const APP_NAME = "LedgerJack";
 
+/** App version — shown in diagnostics so a bug report says which build it's from. */
+export const APP_VERSION = "0.1.0";
+
 /** The motto (competitive positioning). */
 export const APP_MOTTO = "Free, private, AI-powered — files to HMRC, never sells your data.";
 

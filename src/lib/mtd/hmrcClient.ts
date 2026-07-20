@@ -14,6 +14,7 @@ import { RELAY_BASE, SUPABASE_ANON_KEY } from "./hmrcConfig";
 import { collectClientHeaders } from "./fraudHeaders";
 import { loadTokens, saveTokens, clearTokens, StoredTokens } from "./mtdVault";
 import { refreshTokens } from "./oauth";
+import { correlationIdFrom } from "./submissionReceipts";
 
 export interface HmrcCallOptions {
   method: "GET" | "POST" | "PUT";
@@ -26,6 +27,8 @@ export interface HmrcCallOptions {
 export interface HmrcResult {
   status: number;
   data: unknown;
+  /** HMRC's own reference for this request — evidence a submission happened. */
+  correlationId?: string | null;
 }
 
 /** True while there is at least 60s of life left on the access token. */
@@ -82,5 +85,7 @@ export async function callHmrc(opts: HmrcCallOptions): Promise<HmrcResult> {
   } catch {
     data = text;
   }
-  return { status: resp.status, data };
+  // HMRC's correlation ID is the user's evidence that a submission happened.
+  // Surface it on every result so callers can record a receipt.
+  return { status: resp.status, data, correlationId: correlationIdFrom(resp.headers) };
 }

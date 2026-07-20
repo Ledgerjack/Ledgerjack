@@ -170,6 +170,7 @@ function AppContent() {
           {currentView === 'tax-pot'         && <TaxPotView onBack={() => setCurrentView('settings')} />}
           {currentView === 'health'          && <HealthCheck onBack={() => setCurrentView('settings')} onNavigate={(v) => setCurrentView(v as View)} />}
           {currentView === 'provisional'     && <ProvisionalFigures onBack={() => setCurrentView('settings')} />}
+          {currentView === 'report'          && <ReportProblem onBack={() => setCurrentView('settings')} onNavigate={(v) => setCurrentView(v as View)} />}
           {currentView === 'insights'        && <Insights onBack={() => setCurrentView('dashboard')} />}
           {currentView === 'statements'      && <Statements onBack={() => setCurrentView('settings')} />}
           {currentView === 'rules'           && <RulesManager onBack={() => setCurrentView('settings')} />}
