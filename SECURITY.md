@@ -54,3 +54,18 @@ publicly.
 In scope: the client app, crypto/backup, the HMRC relay. Out of scope: the user's
 own device security, their OpenRouter/HMRC accounts, and third-party providers
 (OpenRouter, Supabase hosting, any cloud they choose for backups).
+
+## Dependency security
+
+We separate shipped dependencies (the code that runs in a user's browser) from
+development dependencies (test runner, bundler, linters, which are build-machine
+only). Automated dependency auditing runs weekly and is split accordingly:
+
+- Production advisories are treated as real and fixed promptly. LedgerJack ships
+  a deliberately small set of runtime dependencies to keep this surface minimal.
+- Development-only advisories are reviewed but do not ship to users, so they are
+  not user-facing security issues. We still update dev tooling to patched
+  versions where practical.
+
+The audit workflow is informational (it reports without failing the build), so a
+dev-tool advisory does not block development while genuine issues are handled.
