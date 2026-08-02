@@ -1,7 +1,7 @@
 # LedgerJack — Security Posture & Self-Review
 
 *Prepared as pre-audit self-review (OSTIF / OpenSSF Best Practices) and as supporting evidence for funding applications.*
-*Date: July 2026. Codebase: ~116 source files, ~14,800 LOC, single-page PWA. Licence: AGPL-3.0-or-later.*
+*Date: August 2026. Codebase: ~129 source files, single-page PWA. Licence: AGPL-3.0-or-later. OpenSSF Best Practices badge: passing (#13674).*
 
 ---
 
@@ -44,13 +44,25 @@ These were executed, not assumed:
 
 - **Crypto lifecycle — 7/7 passed:** correct password unlocks; wrong password is rejected; the recovery key re-derives the master key; a password change preserves data; the old password stops working after a change.
 - **Money & fiscal logic — 15/15 passed:** integer-pence arithmetic (avoids floating-point money bugs); correct UK fiscal-year boundary handling (including the 5/6 April cutover); double-entry balance enforced (imbalanced entries rejected).
+- **Ledger field encryption at rest — 14/14 passed:** round-trip encrypt/decrypt, idempotency, legacy-plaintext passthrough, unicode handling, random-IV uniqueness. Basic transaction entry has also been exercised in a real browser; full end-to-end browser verification of the vault lifecycle (creation, lock/unlock, password change, recovery) against a live database is still outstanding (see §7.1).
+
+### Continuous integration and automated testing
+
+The project runs an automated test and quality pipeline on **every push and pull request** via GitHub Actions (`.github/workflows/ci.yml`):
+
+- **Type-checking** (TypeScript strict mode) — blocks merge on error.
+- **Automated unit tests** (Vitest) exercising the real cryptographic, money, tax, date and backup logic — blocks merge on failure.
+- **Linting** (ESLint) — reported and tightened incrementally.
+- **Production build** (Vite) — blocks merge on failure.
+
+A separate weekly workflow (`.github/workflows/audit.yml`) runs `npm audit` for known-vulnerable dependencies, and **GitHub Dependabot** is enabled for automated dependency-vulnerability alerts. This closes the "no dependency scan has been run" gap noted in earlier drafts of this document.
 
 ---
 
 ## 5. Application-security review by category
 
 - **Secrets:** no hardcoded API keys, passwords, or private keys found in source. The Supabase anon placeholder is empty.
-- **Dependencies:** lean runtime surface — 9 direct dependencies (React, Dexie, papaparse, qrcode, uuid, lucide-react, supabase-js, vite-plugin-pwa). Small, well-known, auditable. *(A dependency vulnerability scan — `npm audit` / SCA — has not yet been run in a networked environment; see §7.)*
+- **Dependencies:** lean runtime surface — 9 direct dependencies (React, Dexie, papaparse, qrcode, uuid, lucide-react, supabase-js, vite-plugin-pwa). Small, well-known, auditable. Dependency vulnerability scanning is now active: a weekly `npm audit` workflow plus GitHub Dependabot alerts. At the time of writing, all outstanding advisories are in development-only tooling (test runner and bundler), not in the runtime dependencies that ship to users (see §4 and SECURITY.md).
 - **Input validation:** backup import performs typed schema validation before touching the database (each transaction, split, and account is checked; the crypto-envelope import is constrained to a single expected record). This closes a previously-noted unsafe-cast import path.
 - **Cross-site scripting:** no `dangerouslySetInnerHTML`, `eval`, or `new Function` in application code. The invoice/statement print path builds HTML but **escapes all user-supplied fields** (`&`, `<`, `>`), including multi-line address fields (escaped before newline conversion). The only `innerHTML` use is a static fallback template with no user data.
 - **Transport:** all external endpoints are HTTPS. HMRC endpoints are TLS-only by requirement.
@@ -70,7 +82,7 @@ These were executed, not assumed:
 
 These are stated plainly. None make the app "insecure" for its current local-first use, but they matter for the claims made and for a production filing service.
 
-1. **Ledger field encryption at rest — NOW IMPLEMENTED (pending device testing).** Transaction **descriptions** and split **amounts** are now encrypted at rest under the vault master key, using a backward-compatible marker scheme: newly-written and edited records are encrypted automatically; existing plaintext records remain readable and can be encrypted via a one-tap "Encrypt older records" migration (idempotent, backup-first). This closes the main gap between the E2E claim and the data model for the most sensitive fields (who/what was paid, and how much). The encryption logic is runtime-tested (14/14: round-trip, idempotency, legacy passthrough, unicode, random-IV). **Caveat:** this has not yet been tested end-to-end in a real browser against a live database; it must be verified on-device (with a backup taken first) before users rely on it. **Still plaintext at rest** (candidates for a follow-up pass): account/category identifiers, split memos, mileage-log descriptions, and client/invoice records. The "encrypted at rest" claim should therefore be stated as "your descriptions and amounts are encrypted on your device; some structural fields remain in the clear" until the follow-up lands.
+1. **Ledger field encryption at rest — NOW IMPLEMENTED (partial browser verification).** Transaction **descriptions** and split **amounts** are now encrypted at rest under the vault master key, using a backward-compatible marker scheme: newly-written and edited records are encrypted automatically; existing plaintext records remain readable and can be encrypted via a one-tap "Encrypt older records" migration (idempotent, backup-first). This closes the main gap between the E2E claim and the data model for the most sensitive fields (who/what was paid, and how much). The encryption logic is runtime-tested (14/14: round-trip, idempotency, legacy passthrough, unicode, random-IV) and these tests run in CI on every push. **Caveat:** basic transaction entry has been exercised in a real browser, but the full vault lifecycle end-to-end (vault creation, lock/unlock, password change, recovery-key re-derivation against a live database) has **not yet** been verified on-device; it should be, with a backup taken first, before users rely on it. **Still plaintext at rest** (candidates for a follow-up pass): account/category identifiers, split memos, mileage-log descriptions, and client/invoice records. The "encrypted at rest" claim should therefore be stated as "your descriptions and amounts are encrypted on your device; some structural fields remain in the clear" until the follow-up lands.
 
 2. **The default plain backup is unencrypted JSON.** An encrypted backup option exists but must be chosen. Consider making encryption the default, or presenting a clear warning when a plain export is selected.
 
@@ -84,7 +96,7 @@ These are stated plainly. None make the app "insecure" for its current local-fir
 
 7. **Password KDF choice.** PBKDF2 at 600k iterations is OWASP-compliant and acceptable. Argon2id is the modern preference for memory-hardness; migrating is optional future hardening, not a defect.
 
-8. **Housekeeping before publication:** replace placeholder security/conduct contact emails; run a dependency vulnerability scan (SCA) in a networked build; consider adopting the OpenSSF Best Practices badge (self-certified) as a visible signal.
+8. **Housekeeping before publication:** replace placeholder security/conduct contact emails *(still outstanding)*. Dependency vulnerability scanning is now in place (weekly `npm audit` + Dependabot — done). The OpenSSF Best Practices badge has been earned at the passing level (#13674 — done) and is displayed on the project README.
 
 ---
 
