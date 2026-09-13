@@ -1,0 +1,58 @@
+{
+    "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+    "version": "v1.1.0",
+    "entity": {
+        "type": "individual",
+        "role": "maintainer",
+        "name": "Hamsa Yusuf",
+        "email": "hamsao@gmail.com",
+        "phone": "",
+        "description": "I am the solo maintainer of LedgerJack, an open-source, privacy-first bookkeeping application for self-employed people. I build in the open under the AGPL licence, with a focus on data sovereignty: people's financial records should stay private, on their own device, and never be sold or surveilled. My aim is to give independent workers a free, trustworthy alternative to the paid, data-hungry accounting tools that dominate the market.",
+        "webpageUrl": {
+            "url": "https://github.com/Ledgerjack/Ledgerjack"
+        }
+    },
+    "projects": [{
+        "guid": "ledgerjack",
+        "name": "LedgerJack",
+        "description": "LedgerJack is a free, open-source (AGPL-3.0), offline-first bookkeeping application for self-employed people: sole traders, gig-economy workers, subcontractors and landlords. It is privacy-first by design. All financial records are stored and encrypted on the user's own device using the browser-native Web Crypto API (AES-256-GCM with PBKDF2 key derivation). There is no server that can read a user's data, no account sign-up, no advertising, and no selling of personal information.\n\nThe application helps independent workers keep organised digital records of income, expenses, mileage and receipts, and processes those figures so the user can decide what to do with them (share with an accountant, or file their own taxes). LedgerJack performs no tax calculations on the user's behalf and gives no tax advice; it is an honest record-keeping tool, not an adviser. Users select their country and currency, and the app is architected to support multiple jurisdictions. The first jurisdiction implemented is the United Kingdom (where new 'Making Tax Digital' rules are bringing millions of low-income self-employed people into mandatory digital record-keeping), with the design intended to extend to other major economies.\n\nThe project follows open security best practices: it has earned the OpenSSF Best Practices passing badge, runs continuous integration with an automated test suite on every change, uses automated dependency-vulnerability scanning, and maintains a public, honest security-posture self-review. Funding would support an independent security audit of the cryptographic core, the development of the server component required for direct tax-authority filing, and the professional foundations (hosting, review, testing) needed to bring a privacy-preserving financial tool safely to the people who need it most.",
+        "webpageUrl": {
+            "url": "https://github.com/Ledgerjack/Ledgerjack"
+        },
+        "repositoryUrl": {
+            "url": "https://github.com/Ledgerjack/Ledgerjack"
+        },
+        "licenses": ["spdx:AGPL-3.0-or-later"],
+        "tags": ["bookkeeping", "accounting", "privacy", "encryption", "personal-finance", "offline-first", "self-employed", "financial-inclusion", "digital-public-goods", "pwa"]
+    }],
+    "funding": {
+        "channels": [{
+            "guid": "email",
+            "type": "other",
+            "address": "hamsao@gmail.com",
+            "description": "Please get in touch by email to arrange funding. Bank transfer and other payment details can be provided on request."
+        }],
+        "plans": [
+            {
+                "guid": "core-development",
+                "status": "active",
+                "name": "Development, security audit and infrastructure",
+                "description": "Supports an independent security audit of the encryption core, development of the server component required for direct tax-authority filing, hosting, and the professional testing and review needed to bring the tool safely to users.",
+                "amount": 10000,
+                "currency": "USD",
+                "frequency": "one-time",
+                "channels": ["email"]
+            },
+            {
+                "guid": "goodwill",
+                "status": "active",
+                "name": "Goodwill contribution",
+                "description": "Contribute any amount to support the ongoing development and maintenance of LedgerJack as a free, privacy-first tool for self-employed people.",
+                "amount": 0,
+                "currency": "USD",
+                "frequency": "one-time",
+                "channels": ["email"]
+            }
+        ]
+    }
+}
